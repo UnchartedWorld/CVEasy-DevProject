@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVEasy API", "CVEasy API\CVEasy API.csproj", "{3370F0F2-AA3C-4A28-9F73-C0B563D214C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVEasy API Unit Tests", "CVEasy API Unit Tests\CVEasy API Unit Tests.csproj", "{ABA3BABD-4F35-41EA-93A7-3A85E1C6D299}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3370F0F2-AA3C-4A28-9F73-C0B563D214C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3370F0F2-AA3C-4A28-9F73-C0B563D214C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3370F0F2-AA3C-4A28-9F73-C0B563D214C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3370F0F2-AA3C-4A28-9F73-C0B563D214C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABA3BABD-4F35-41EA-93A7-3A85E1C6D299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABA3BABD-4F35-41EA-93A7-3A85E1C6D299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABA3BABD-4F35-41EA-93A7-3A85E1C6D299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABA3BABD-4F35-41EA-93A7-3A85E1C6D299}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
