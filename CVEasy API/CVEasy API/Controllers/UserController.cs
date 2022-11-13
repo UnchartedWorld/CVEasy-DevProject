@@ -1,3 +1,4 @@
+using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVEasy_API.Controllers
@@ -6,19 +7,25 @@ namespace CVEasy_API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private IUser _user; // Initiates a new data context each time it's called. 
+        public UserController(IUser user)
+        {
+            _user = user;
+        }
         // GET: api/User
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var dataResult = _user.GetUser();
+            return Ok(new { code = 200, message = "Data retrieved", data = dataResult });
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+        // // GET: api/User/5
+        // [HttpGet("{id}", Name = "Get")]
+        // public string Get(int id)
+        // {
+        //     return "value";
+        // }
 
         // POST: api/User
         [HttpPost]
