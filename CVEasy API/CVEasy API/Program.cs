@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddScoped<IUserCategory, UserCategoryService>();
 builder.Services.AddControllers();
 
 // Registers the DB Context to the Program.cs
