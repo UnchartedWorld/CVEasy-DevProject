@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CVEasy_API.Model;
 
 public class TableThemes
 {
+    [Key]
     public int themeID { get; set; }
     public string themeName { get; set; }
     public string themeDescr { get; set; }

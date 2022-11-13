@@ -1,8 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CVEasy_API.Model;
 
 public class TableUser
 {
-    public int userID { get; set; }
+    [Key]
+    public int userID { get; }
     public string loginName { get; set; }
     public string passwordHash { get; set; }
     public string passwordSalt { get; set; }
