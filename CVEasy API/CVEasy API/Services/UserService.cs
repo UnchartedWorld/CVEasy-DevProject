@@ -14,13 +14,7 @@ public class UserService : IUser // This can be re-used to get all users in othe
 
     public List<UserListResponse> GetUser()
     {
-        var unfilteredUser = _dataContext.TableUser;
-        var dtoList = new List<UserListResponse>();
-
-        if (unfilteredUser is not null)
-        {
-            dtoList = unfilteredUser.Select(s => new UserListResponse()).ToList();
-        }
+        var dtoList = _dataContext.TableUser.Select(s => new UserListResponse(s.userID, s.loginName, s.email)).ToList();
         return dtoList; // Returns it.
     }
 }
