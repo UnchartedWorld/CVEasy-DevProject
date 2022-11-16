@@ -15,7 +15,7 @@ public class UserCategoryService : IUserCategory
 
     public List<TableUserCategory> GetUserCategory()
     {
-        var result = _dataContext.TableUserCategories.ToList();
+        var result = _dataContext.TableUserCategory.ToList();
         return result;
     }
 }
