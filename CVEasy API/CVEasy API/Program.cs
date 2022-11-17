@@ -11,6 +11,7 @@ builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<IUserCategory, UserCategoryService>();
 builder.Services.AddScoped<IComments, CommentsService>();
 builder.Services.AddScoped<IThemes, ThemesService>();
+builder.Services.AddScoped<ITags, TagsService>();
 builder.Services.AddControllers();
 
 // Registers the DB Context to the Program.cs
