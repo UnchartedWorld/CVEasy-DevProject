@@ -1,4 +1,3 @@
-using CVEasy_API.Controllers;
 using CVEasy_API.Data;
 using CVEasy_API.Interfaces;
 using CVEasy_API.Model;
