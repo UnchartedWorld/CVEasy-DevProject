@@ -7,5 +7,5 @@ public class TableTags
     [Key]
     public int tagID { get; set; }
     public string tag { get; set; }
-    public string tagDesc { get; set; }
+    public string tagDescr { get; set; }
 }
