@@ -8,4 +8,11 @@ LaTeX templates via a simplistic user interface.
 
 ## What is used to make this project?
 
-``To be filled in.``
+```
+- .NET 6
+- JetBrains Rider
+- PostgresSQL
+- Postgres NuGet Package
+- ReactJS - ReactDOM
+- NUnit
+```
