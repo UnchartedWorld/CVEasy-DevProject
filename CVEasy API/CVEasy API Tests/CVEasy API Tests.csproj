@@ -24,4 +24,12 @@
       <Content Include="obj\Debug\net6.0\CVEasy API Unit Tests.pdb" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\CVEasy API\CVEasy API.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Core Functionality" />
+    </ItemGroup>
+
 </Project>
