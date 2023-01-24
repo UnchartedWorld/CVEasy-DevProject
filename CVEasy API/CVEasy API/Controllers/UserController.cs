@@ -1,5 +1,6 @@
 using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using CVEasy_API.Model;
 
 namespace CVEasy_API.Controllers
 {
@@ -13,12 +14,12 @@ namespace CVEasy_API.Controllers
             _user = user;
         }
         // GET: api/User
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var dataResult = _user.GetUser();
-            return Ok(new { code = 200, message = "Data retrieved", data = dataResult });
-        }
+        //[HttpGet]
+        //public IActionResult Get()
+        //{
+            //var dataResult = _user.GetUser();
+            //return Ok(new { code = 200, message = "Data retrieved", data = dataResult });
+        //}
 
         // // GET: api/User/5
         // [HttpGet("{id}", Name = "Get")]
@@ -26,11 +27,22 @@ namespace CVEasy_API.Controllers
         // {
         //     return "value";
         // }
-
+        
         // POST: api/User
         [HttpPost]
         public void Post([FromBody] string value)
         {
+        }
+
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] UserLoginRequest loginRequest)
+        {
+            var user = _user.GetUser(loginRequest);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+            return Ok($"Good job logging in, {user.LoginName}!");
         }
 
         // PUT: api/User/5
