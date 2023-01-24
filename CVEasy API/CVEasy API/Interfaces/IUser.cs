@@ -5,5 +5,6 @@ namespace CVEasy_API.Interfaces;
 
 public interface IUser
 {
-    public List<UserListResponse> GetUser();
+    public UserListResponse? GetUser(UserLoginRequest loginRequest);
+    
 }
