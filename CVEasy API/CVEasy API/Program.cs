@@ -8,10 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IUser, UserService>();
-builder.Services.AddScoped<IUserCategory, UserCategoryService>();
 builder.Services.AddScoped<IComments, CommentsService>();
 builder.Services.AddScoped<IThemes, ThemesService>();
 builder.Services.AddScoped<ITags, TagsService>();
+builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddControllers();
 
 // Registers the DB Context to the Program.cs
