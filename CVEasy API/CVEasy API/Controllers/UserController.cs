@@ -1,4 +1,3 @@
-using CVEasy_API.Data;
 using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CVEasy_API.Model;
@@ -11,7 +10,6 @@ namespace CVEasy_API.Controllers
     {
         private IUser _user; // Initiates a new data context each time it's called. 
         private IAuthentication _authentication;
-        private DataContext _dataContext;
 
         public UserController(IUser user, IAuthentication authentication)
         {
