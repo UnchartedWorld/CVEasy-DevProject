@@ -1,3 +1,4 @@
+using CVEasy_API.Data;
 using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CVEasy_API.Model;
@@ -9,40 +10,36 @@ namespace CVEasy_API.Controllers
     public class UserController : ControllerBase
     {
         private IUser _user; // Initiates a new data context each time it's called. 
-        public UserController(IUser user)
+        private IAuthentication _authentication;
+        private DataContext _dataContext;
+
+        public UserController(IUser user, IAuthentication authentication)
         {
             _user = user;
+            _authentication = authentication;
         }
-        // GET: api/User
-        //[HttpGet]
-        //public IActionResult Get()
-        //{
-            //var dataResult = _user.GetUser();
-            //return Ok(new { code = 200, message = "Data retrieved", data = dataResult });
-        //}
 
-        // // GET: api/User/5
-        // [HttpGet("{id}", Name = "Get")]
-        // public string Get(int id)
-        // {
-        //     return "value";
-        // }
-        
         // POST: api/User
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
         [HttpPost("Login")]
         public IActionResult Login([FromBody] UserLoginRequest loginRequest)
         {
             var user = _user.GetUser(loginRequest);
             if (user == null)
             {
-                return BadRequest("User not found");
+                return BadRequest("Email or password is wrong.");
             }
-            return Ok($"Good job logging in, {user.LoginName}!");
+
+            return Ok(
+                $"Login request was successful. For bug-checking reasons, we'll display the email now. {user.Email}");
+        }
+
+        [HttpPost("Register")]
+        public IActionResult Register([FromBody] UserRegistrationRequest registrationRequest)
+        {
+            _authentication.RegisterUser(registrationRequest);
+
+
+            return Ok($"Test message");
         }
 
         // PUT: api/User/5
