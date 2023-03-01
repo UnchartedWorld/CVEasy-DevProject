@@ -1,4 +1,6 @@
+using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using CVEasy_API.Model;
 
 namespace CVEasy_API.Controllers
 {
@@ -6,24 +8,36 @@ namespace CVEasy_API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // GET: api/User
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        private IUser _user; // Initiates a new data context each time it's called. 
+        private IAuthentication _authentication;
 
-        // GET: api/User/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        public UserController(IUser user, IAuthentication authentication)
         {
-            return "value";
+            _user = user;
+            _authentication = authentication;
         }
 
         // POST: api/User
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] UserLoginRequest loginRequest)
         {
+            var user = _user.GetUser(loginRequest);
+            if (user == null)
+            {
+                return BadRequest("Email or password is wrong.");
+            }
+
+            return Ok(
+                $"Login request was successful. For bug-checking reasons, we'll display the email now. {user.Email}");
+        }
+
+        [HttpPost("Register")]
+        public IActionResult Register([FromBody] UserRegistrationRequest registrationRequest)
+        {
+            _authentication.RegisterUser(registrationRequest);
+
+
+            return Ok($"Test message");
         }
 
         // PUT: api/User/5
