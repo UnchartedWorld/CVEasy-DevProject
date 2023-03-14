@@ -8,12 +8,13 @@ import RegisterPage from "./components/pages/RegisterPage";
 import TemplateView from "./components/pages/TemplateView";
 import {ThemeProvider} from "@mui/material/styles";
 import themes from './themes';
+import ResumeCreation from 'components/pages/ResumeCreation';
 
 function App() {
     return (
         <React.Fragment>
             <ThemeProvider theme={themes}>
-                <NavbarComponent/>
+                <NavbarComponent />
                 <Routes>
                     <Route path="/"/>
                     <Route path="/About" element={<About/>}/>
@@ -21,6 +22,7 @@ function App() {
                     <Route path="/Login" element={<LoginPage/>}/>
                     <Route path="/Register" element={<RegisterPage/>}/>
                     <Route path="/TemplateView" element={<TemplateView/>}/>
+                    <Route path="/ResumeCreation" element={<ResumeCreation/>}/>
                 </Routes>
             </ThemeProvider>
         </React.Fragment>
