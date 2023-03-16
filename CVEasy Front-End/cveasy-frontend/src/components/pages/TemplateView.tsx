@@ -1,11 +1,12 @@
 import { Box, Grid } from "@mui/material";
+import { Container } from "@mui/system";
 import TemplateInfo from "components/TemplateInfo";
 import data from './Templates';
 
 export default function TemplateView() {
   return (
     <Box>
-      <Grid container spacing={2} padding={"3rem"}>
+      <Grid container component={"main"} spacing={2} padding={"3rem"}>
         <Grid item xs={6}>
           <TemplateInfo />
         </Grid>
