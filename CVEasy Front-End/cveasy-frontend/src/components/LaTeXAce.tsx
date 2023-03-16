@@ -8,7 +8,7 @@ import AceEditor from "react-ace";
 
 export default function LaTeXAce() {
     return (
-    <Box>
+    <Box component={"section"}>
       <AceEditor
         name="editor"
         mode="latex"
