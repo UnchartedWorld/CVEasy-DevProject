@@ -1,14 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
+import { brandPrimary } from "CustomColors";
 import { Link } from "react-router-dom";
-import { Container } from "@mui/system";
-import { brandPrimary, brandSecondary } from "CustomColors";
 
-
-export default function Hero() {
+export default function InterestedComponent() {
   return (
     <Box
       component={"section"}
-      sx={{ backgroundColor: brandPrimary[100], minHeight: "100dvh" }}
+      sx={{ backgroundColor: brandPrimary[100], minHeight: "60dvh" }}
     >
       <Container>
         <Box
@@ -21,21 +19,10 @@ export default function Hero() {
         >
           <Box sx={{ flex: 1 }}>
             <Typography
-              variant="body2"
-              sx={{
-                fontSize: "1.125rem",
-                mt: "5rem",
-                mb: "2rem",
-              }}
+              variant="h2"
+              sx={{ fontSize: "4rem", fontWeight: "bold", mt: "3rem" }}
             >
-              CVEasy makes it, well, easy.
-            </Typography>
-
-            <Typography
-              variant="h1"
-              sx={{ fontSize: "4rem", fontWeight: "bold" }}
-            >
-              Create resumes with the power of LaTeX!
+              Interested?
             </Typography>
             <Button
               variant="contained"
@@ -47,16 +34,16 @@ export default function Hero() {
             >
               <Link
                 style={{ textDecoration: "none", color: "inherit" }}
-                to={`/Register`}
+                to={`/Templates`}
               >
-                Get started
+                Browse templates
               </Link>
             </Button>
           </Box>
 
           <Box sx={{ flex: "1.25" }}>
             <img
-              src={process.env.PUBLIC_URL + "/assets/resume-Folder.svg"}
+              src={process.env.PUBLIC_URL + "/assets/online-CV.svg"}
               alt="Illustration that shows a resume folder"
               title="Illustration that shows a resume folder. Why are you hovering over this?"
               style={{
