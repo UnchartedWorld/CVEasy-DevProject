@@ -50,7 +50,7 @@ export default function TemplateInfo() {
           </Button>
         </Grid>
         <Grid item xs={6} sm={5} md={3}>
-          <Button variant="outlined" onClick={handleClickOpen}>View LaTeX code</Button>
+          <Button variant="contained" color="secondary" onClick={handleClickOpen}>View LaTeX code</Button>
           <Dialog
             open={open}
             TransitionComponent={Transition}
