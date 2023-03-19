@@ -13,6 +13,7 @@ import ResumeCreation from "components/pages/ResumeCreation";
 import { CssBaseline } from "@mui/material";
 import AccountDetails from "components/pages/AccountDetails";
 import NotFoundPage from "components/pages/NotFoundPage";
+import UploadPage from "components/pages/UploadPage";
 
 function App() {
   const ReactDOM = require("react-dom");
@@ -38,6 +39,7 @@ function App() {
           <Route path="/TemplateView" element={<TemplateView />} />
           <Route path="/ResumeCreation" element={<ResumeCreation />} />
           <Route path="/Account" element={<AccountDetails />} />
+          <Route path="/Upload" element={<UploadPage />} />
         </Routes>
       </ThemeProvider>
     </React.Fragment>
