@@ -43,13 +43,13 @@ export default function TemplateInfo() {
             Theme title
           </Typography>
         </Grid>
-        <Grid item xs={6} sm={5} md={3}>
+        <Grid item xs={8} sm={7}>
           {/* I need to make sure this re-routes to the right page and sends the theme ID, else we can't copy the LaTeX code */}
           <Button variant="contained" component={Link} to="/ResumeCreation">
             Use Template
           </Button>
         </Grid>
-        <Grid item xs={6} sm={5} md={3}>
+        <Grid item xs={4} sm={5}>
           <Button variant="contained" color="secondary" onClick={handleClickOpen}>View LaTeX code</Button>
           <Dialog
             open={open}
