@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,9 @@ namespace CVEasy_API.Controllers
         
         // GET: api/Theme
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetThemes([FromBody] GetAllThemesRequest allThemesRequest)
         {
-            var dataResult = _themes.GetThemes();
+            var dataResult = _themes.GetAllThemes(allThemesRequest);
             return Ok(new { code = 200, message = "Data received for themes.", data = dataResult });
         }
 
