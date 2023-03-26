@@ -1,10 +1,20 @@
 import React, { useState } from "react";
-import { Box, Grid, Paper } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Pagination,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import ThemeCard from "../ThemeCard";
+import { Search } from "@mui/icons-material";
 
 const sampleData = [
   {
@@ -62,17 +72,54 @@ export const data = sampleData;
 export default function Templates() {
   return (
     <Box sx={{ flexGrow: 1 }}>
+      <Typography
+        component={"h1"}
+        variant={"h1"}
+        sx={{ fontSize: "2.5rem", fontWeight: "bold" }}
+        paddingLeft={"24px"}
+        paddingTop={"32px"}
+      >
+        Find a template that you like, and try it out:
+      </Typography>
+      <form style={{ paddingTop: "16px", paddingLeft: "24px" }}>
+        <TextField
+          id="templateSearchBar"
+          className="text"
+          label="Search to enter a template name"
+          variant="outlined"
+          placeholder="Find..."
+          sx={{ width: "96.2vw" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </form>
       <Grid container component={"main"} spacing={2}>
         {sampleData.map((themeData, i) => (
           <Grid xs={12} sm={6} md={4} component={"article"}>
-              <ThemeCard
-                img={themeData.img}
-                cardTitle={themeData.title}
-                cardDescription={themeData.description}
-              />
+            <ThemeCard
+              img={themeData.img}
+              cardTitle={themeData.title}
+              cardDescription={themeData.description}
+            />
           </Grid>
         ))}
       </Grid>
+      <Box
+        sx={{
+          display: "flex",
+          flexGrow: 1,
+          justifyContent: "center",
+          paddingBottom: "36px",
+          paddingTop: "12px",
+        }}
+      >
+        <Pagination count={3} variant="outlined" />
+      </Box>
     </Box>
   );
 }
