@@ -1,8 +1,10 @@
-using CVEasy_API.Model;
+using CVEasy_API.DTOs;
 
-namespace CVEasy_API.Interfaces;
-
-public interface IThemes
+namespace CVEasy_API.Interfaces
 {
-    public List<TableThemes> GetThemes();
+    public interface IThemes
+    {
+        // returning with paging
+        public GetThemePaging GetAllThemes(GetAllThemesRequest request);
+    }
 }
