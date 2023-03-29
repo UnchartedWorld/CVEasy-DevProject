@@ -135,7 +135,7 @@ class PDFTeX {
         if (binary_pdf === false)
           return p.done(false);
 
-        pdf_dataurl = 'data:application/pdf;charset=binary;base64,' + window.btoa(binary_pdf);
+        var pdf_dataurl = 'data:application/pdf;charset=binary;base64,' + window.btoa(binary_pdf);
 
         return p.done(pdf_dataurl);
       });
