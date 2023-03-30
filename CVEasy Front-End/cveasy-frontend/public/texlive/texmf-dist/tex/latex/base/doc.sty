@@ -9,11 +9,11 @@
 %% This is a generated file.
 %% 
 %% The source is maintained by the LaTeX Project team and bug
-%% reports for it can be opened at http://latex-project.org/bugs.html
+%% reports for it can be opened at https://latex-project.org/bugs.html
 %% (but please observe conditions on bug reports sent to that address!)
 %% 
 %% 
-%% Copyright 1993-2015
+%% Copyright (C) 1993-2019
 %% The LaTeX3 Project and any individual authors listed elsewhere
 %% in this file.
 %% 
@@ -24,9 +24,9 @@
 %% conditions of the LaTeX Project Public License, either version 1.3c
 %% of this license or (at your option) any later version.
 %% The latest version of this license is in
-%%    http://www.latex-project.org/lppl.txt
+%%    https://www.latex-project.org/lppl.txt
 %% and version 1.3c or later is part of all distributions of LaTeX
-%% version 2005/12/01 or later.
+%% version 2008 or later.
 %% 
 %% This file has the LPPL maintenance status "maintained".
 %% 
@@ -43,23 +43,8 @@
 %% extension .ins) which are part of the distribution.
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
  \ProvidesPackage{doc}
-  [2014/09/29 v2.1e
+  [2019/11/10 v2.1k
    Standard LaTeX documentation package (FMi)]
-%% \CharacterTable
-%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%%   Digits        \0\1\2\3\4\5\6\7\8\9
-%%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%%   Dollar        \$     Percent       \%     Ampersand     \&
-%%   Acute accent  \'     Left paren    \(     Right paren   \)
-%%   Asterisk      \*     Plus          \+     Comma         \,
-%%   Minus         \-     Point         \.     Solidus       \/
-%%   Colon         \:     Semicolon     \;     Less than     \<
-%%   Equals        \=     Greater than  \>     Question mark \?
-%%   Commercial at \@     Left bracket  \[     Backslash     \\
-%%   Right bracket \]     Circumflex    \^     Underscore    \_
-%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%%   Right brace   \}     Tilde         \~}
 %%
 %% Package `doc' to use with LaTeX 2e
 %% Copyright (C) 1989-1999 Frank Mittelbach, all rights reserved.
@@ -260,7 +245,8 @@
 \def\verbatim{\@beginparpenalty \predisplaypenalty \@verbatim
               \MacroFont \frenchspacing \@vobeyspaces \@xverbatim}
 \@namedef{verbatim*}{\@beginparpenalty \predisplaypenalty \@verbatim
-              \MacroFont \@sxverbatim}
+              \@setupverbvisiblespace
+              \MacroFont \@vobeyspaces \@sxverbatim}
 \def\@verbatim{\trivlist \item[]\if@minipage\else\vskip\parskip\fi
       \leftskip\@totalleftmargin\rightskip\z@
       \parindent\z@\parfillskip\@flushglue\parskip\z@
@@ -289,12 +275,6 @@
     \def^^M{\verb@egroup\@latex@error{%
            Text for \noexpand\verb command ended by end of line}\@ehc}}%
 \endgroup
-\def\@sverb#1{%
-  \catcode`#1\active  \lccode`\~`#1%
-  \gdef\verb@balance@group{\verb@egroup
-     \@latex@error{Illegal use of \noexpand\verb command}\@ehc}%
-  \aftergroup\verb@balance@group
-  \lowercase{\let~\verb@egroup}}
 \def\verbatim@nolig@list{\do\`\do\<\do\>\do\,\do\'\do\-}
 \def\do@noligs#1{%
   \catcode`#1\active
@@ -309,7 +289,12 @@
    \catcode`\\12
    \MakePrivateLetters \m@cro@ \iffalse}
 \long\def\m@cro@#1#2{\endgroup \topsep\MacroTopsep \trivlist
-   \edef\saved@macroname{\string#2}%
+  \edef\saved@macroname{\string#2}%
+  #1
+    \let\saved@indexname\saved@macroname
+  \else
+    \edef\saved@indexname{\expandafter\@gobble\string#2}%
+  \fi
   \def\makelabel##1{\llap{##1}}%
   \if@inlabel
     \let\@tempa\@empty \count@\macro@cnt
@@ -570,8 +555,8 @@
        \def\indexspace{\par\vspace{10pt plus 2pt minus 3pt}}%
       }}{}
 \def\efill{\hfill\nopagebreak}%
-\def\dotfill{\leaders\hbox to.6em{\hss .\hss}\hskip\z@ plus  1fill}%
-\def\dotfil{\leaders\hbox to.6em{\hss .\hss}\hfil}%
+\def\dotfill{\leaders\hbox to.6em{\hss .\hss}\hskip\z@ plus  1fill\kern\z@}%
+\def\dotfil{\leaders\hbox to.6em{\hss .\hss}\hfil\kern\z@}%
 \def\pfill{\unskip~\dotfill\penalty500\strut\nobreak
                \dotfil~\ignorespaces}%
 \def\*{\leavevmode\lower.8ex\hbox{$\,\widetilde{\ }\,$}}
@@ -589,8 +574,7 @@
                                    \actualchar
                                    \generalname
                                  \else
-                                   \expandafter\@gobble
-                                   \saved@macroname
+                                   \saved@indexname
                                    \actualchar
                                    \string\verb\quotechar*%
                                    \verbatimchar\saved@macroname
@@ -599,6 +583,7 @@
                                  :\levelchar #3}}%
   \@tempa\endgroup\@esphack}
 \def\saved@macroname{}
+\def\saved@indexname{}
 \def\generalname{General}
 \let\RecordChanges\makeglossary
 \newdimen\GlossaryMin         \GlossaryMin       = 80pt
@@ -624,7 +609,11 @@
      {\def\glossary@prologue{\section*{{Change History}}%
                  \markboth{{Change History}}{{Change History}}%
                  }}{}
-\@ifundefined{GlossaryParms}{\let\GlossaryParms\IndexParms}{}
+\@ifundefined{GlossaryParms}{\let\GlossaryParms\IndexParms
+  \expandafter\def\expandafter\GlossaryParms\expandafter{\GlossaryParms
+     \rightskip 15pt plus 1fil
+     \parfillskip -15pt plus -1fil\relax}
+}{}
 \def\PrintChanges{\@input@{\jobname.gls}%
                   \global\let\PrintChanges\@empty}
 \newcommand\AlsoImplementation{%
@@ -735,6 +724,7 @@
 \def\init@checksum{\relax
     \global\bslash@cnt\z@}
 \def\check@checksum{\relax
+  \ifnum\check@sum>\m@ne
      \ifnum\check@sum=\z@
        \typeout{**********************************}%
        \typeout{* This macro file has no checksum!}%
@@ -752,8 +742,9 @@
            Try to get a correct version.}%
        \fi
      \fi
-     \global\check@sum\z@}
-\newcount\check@sum           \check@sum  = \z@
+  \fi
+  \global\check@sum\m@ne}
+\newcount\check@sum           \check@sum  = \m@ne
 \newcount\bslash@cnt          \bslash@cnt = \z@
 \def\CheckSum#1{\@bsphack\global\check@sum#1\relax\@esphack}
 \def\step@checksum{\global\advance\bslash@cnt\@ne}
@@ -816,8 +807,8 @@
        \tolerance=1000\relax
 { \catcode`\"=12
   \global\mathcode`\\="705C \global\mathcode`\@="7040 }
-\@ifundefined{DocstyleParms}{}{}
-\DocstyleParms     \let\DocstyleParms\relax
+\@ifundefined{DocstyleParms}{}{\DocstyleParms}
+ \let\DocstyleParms\relax
 \@ifundefined{AmSTeX}
    {\def\AmSTeX{\leavevmode\hbox{$\mathcal A\kern-.2em\lower.376ex%
         \hbox{$\mathcal M$}\kern-.2em\mathcal S$-\TeX}}}{}

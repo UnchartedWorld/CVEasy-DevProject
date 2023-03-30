@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
-# $Id: tlmgrgui.pl 38523 2015-10-02 01:35:27Z preining $
+# $Id: tlmgrgui.pl 50334 2019-03-11 01:56:18Z preining $
 #
-# Copyright 2009-2015 Norbert Preining
+# Copyright 2009-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -13,8 +13,8 @@
 $^W = 1;
 use strict;
 
-my $guisvnrev = '$Revision: 38523 $';
-my $guidatrev = '$Date: 2015-10-02 03:35:27 +0200 (Fri, 02 Oct 2015) $';
+my $guisvnrev = '$Revision: 50334 $';
+my $guidatrev = '$Date: 2019-03-11 02:56:18 +0100 (Mon, 11 Mar 2019) $';
 my $tlmgrguirevision;
 if ($guisvnrev =~ m/: ([0-9]+) /) {
   $tlmgrguirevision = $1;
@@ -131,6 +131,7 @@ my $selection_value = 0;
 $::opt_lang = $config{"gui-lang"} if (defined($config{"gui-lang"}));
 $::opt_lang = $opts{"gui-lang"} if (defined($opts{"gui-lang"}));
 require("TeXLive/trans.pl");
+load_translations();
 
 
 my @archsavail;
@@ -241,6 +242,20 @@ sub guimain {
 ############## GUI ########################
 
 sub build_initial_gui {
+  # processed @::SAVEDARGV to replace 
+  #  --font='foobar'
+  # with 
+  #  --font 'foobar'
+  # as required by Tk::CmdLine.
+  my @a;
+  for my $c (@::SAVEDARGV) {
+    if ($c =~ m/^--?(font|background|class|display|screen|foreground|geometry|name|title|xrm)=(.*)$/) {
+      push @a, "--$1", $2;
+    } else {
+      push @a, $c;
+    }
+  }
+  Tk::CmdLine::SetArguments(@a);
   $mw = MainWindow->new;
   $mw->title("TeX Live Manager $TeXLive::TLConfig::ReleaseYear");
   $mw->withdraw;
@@ -640,7 +655,7 @@ sub setup_menu_system {
 
 tlmgrgui revision $tlmgrguirevision
 $tlmgrrev
-Copyright 2009-2014 Norbert Preining
+Copyright 2009-2017 Norbert Preining
 
 Licensed under the GNU General Public License version 2 or higher
 In case of problems, please contact: texlive\@tug.org"
@@ -1282,41 +1297,47 @@ sub apply_settings_changes {
 sub init_paper_xdvi {
   if (!win32()) {
     $papers{"xdvi"} = TeXLive::TLPaper::get_paper_list("xdvi");
-    $currentpaper{"xdvi"} = ${$papers{"xdvi"}}[0];
+    $currentpaper{"xdvi"} = $papers{"xdvi"}->[0];
   }
 }
 sub init_paper_pdftex {
   $papers{"pdftex"} = TeXLive::TLPaper::get_paper_list("pdftex");
-  $currentpaper{"pdftex"} = ${$papers{"pdftex"}}[0];
+  $currentpaper{"pdftex"} = $papers{"pdftex"}->[0];
 }
 sub init_paper_dvips {
   $papers{"dvips"} = TeXLive::TLPaper::get_paper_list("dvips");
-  $currentpaper{"dvips"} = ${$papers{"dvips"}}[0];
+  $currentpaper{"dvips"} = $papers{"dvips"}->[0];
 }
 sub init_paper_context {
   if (defined($localtlpdb->get_package("bin-context"))) {
     $papers{"context"} = TeXLive::TLPaper::get_paper_list("context");
-    $currentpaper{"context"} = ${$papers{"context"}}[0];
+    $currentpaper{"context"} = $papers{"context"}->[0];
   }
 }
 sub init_paper_dvipdfmx {
   $papers{"dvipdfmx"} = TeXLive::TLPaper::get_paper_list("dvipdfmx");
-  $currentpaper{"dvipdfmx"} = ${$papers{"dvipdfmx"}}[0];
+  $currentpaper{"dvipdfmx"} = $papers{"dvipdfmx"}->[0];
 }
+
 sub init_paper_psutils {
   $papers{"psutils"} = TeXLive::TLPaper::get_paper_list("psutils");
-  $currentpaper{"psutils"} = ${$papers{"psutils"}}[0];
+  $currentpaper{"psutils"} = $papers{"psutils"}->[0];
 }
 
 
 sub init_all_papers {
   for my $p (keys %init_paper_subs) {
-    &{$init_paper_subs{$p}}();
+    my $pkg = $TeXLive::TLPaper::paper{$p}{'pkg'};
+    if ($localtlpdb->get_package($pkg)) {
+      &{$init_paper_subs{$p}}();
+    }
   }
 }
 
 
 sub do_paper_settings {
+  # empty paper array
+  %papers = ();
   init_all_papers();
   my $sw = $mw->Toplevel(-title => __("Paper options"));
   $sw->transient($mw);
@@ -1346,7 +1367,7 @@ sub do_paper_settings {
       if (($p eq "context") && !defined($localtlpdb->get_package("bin-context"))) {
         next;
       }
-      $l{$p} = $back_config_pap->Label(-text => __("Default paper for") . " $p", -anchor => "w");
+      $l{$p} = $back_config_pap->Label(-text => __("Default paper for %s", $p), -anchor => "w");
       $m{$p} = $back_config_pap->Label(-textvariable => \$changedpaper{$p}, -anchor => "w");
       $settings_label{$p} = $m{$p};
       $r{$p} = $back_config_pap->Button(-text => __("Change"),
@@ -1383,6 +1404,7 @@ sub do_gui_language_setting {
     sk => "Slovak",
     sl => "Slovenian",
     sr => "Serbian",
+    uk => "Ukrainian",
     vi => "Vietnamese",
     "zh_CN" => "Simplified Chinese",
     "zh_TW" => "Traditional Chinese"
@@ -1746,11 +1768,11 @@ sub change_paper {
 sub select_paper {
   my $back_config = shift;
   my $prog = shift;
-  my $foo = $back_config->Toplevel(-title => __("Select paper format for") . " $prog");
+  my $foo = $back_config->Toplevel(-title => __("Select paper format for %s", $prog));
   $foo->transient($back_config);
   $foo->grab();
   my $var = $changedpaper{$prog};
-  my $opt = $foo->BrowseEntry(-label => __("Default paper for") . " $prog", -variable => \$var);
+  my $opt = $foo->BrowseEntry(-label => __("Default paper for %s", $prog), -variable => \$var);
   foreach my $p (sort @{$papers{$prog}}) {
     $opt->insert("end",$p);
   }
@@ -1925,8 +1947,6 @@ sub SelectedPackages {
 sub critical_updates_done_msg_and_end {
   # terminate here immediately so that we are sure the auto-updater
   # is run immediately
-  # make sure we exit in finish(0)
-  $::gui_mode = 0;
   # warn that program will now be terminated
   $mw->Dialog(-title => __("Warning"),
     -text => __("Critical updates have been installed.\nProgram will terminate now.\nPlease restart if necessary."),
@@ -1934,7 +1954,8 @@ sub critical_updates_done_msg_and_end {
   # also delete the main window before we kill the process to 
   # make sure that Tk is happy (segfault on cmd line, email Taco)
   $mw->destroy;
-  finish(0); 
+  # don't call finish(0) as we need to exit immediately
+  exit(0); 
 }
   
 sub update_all_packages {
@@ -2468,7 +2489,7 @@ sub cb_edit_string_or_dir {
   my $sw = $mw->Toplevel(-title => __("Edit directory"));
   $sw->transient($mw);
   $sw->withdraw;
-  $sw->Label(-text => __("New value for") . " $what:")->pack(@p_ii);
+  $sw->Label(-text => __("New value for %s:", $what))->pack(@p_ii);
   my $entry = $sw->Entry(-text => $cur, -width => 30);
   $entry->pack(@p_ii);
   $sw->Button(-text => __("Choose Directory"),
@@ -2517,13 +2538,13 @@ sub cb_edit_location {
       sub {
         if ($val !~ m/^  /) {
           $val = "";
-          $okbutton->configure(-state => 'disabled');
+          # $okbutton->configure(-state => 'disabled');
         } elsif ($val =~ m!(http|ftp)://!) {
           $val = TeXLive::TLUtils::extract_mirror_entry($val);
-          $okbutton->configure(-state => 'normal');
+          # $okbutton->configure(-state => 'normal');
         } else {
           $val =~ s/^\s*//;
-          $okbutton->configure(-state => 'normal');
+          # $okbutton->configure(-state => 'normal');
         }
       },
     -variable => \$val);
@@ -2535,17 +2556,17 @@ sub cb_edit_location {
                       my $var = $sw->chooseDirectory();
                       if (defined($var)) {
                         $val = $var;
-                        $okbutton->configure(-state => 'normal');
+                        # $okbutton->configure(-state => 'normal');
                       }
                     })->pack(@left, @p_ii);
   $f1->Button(-text => __("Use standard net repository"),
     -command => sub {
                       $val = $TeXLiveURL;
-                      $okbutton->configure(-state => 'normal');
+                      # $okbutton->configure(-state => 'normal');
                     })->pack(@left, @p_ii);
   $f1->pack;
   my $f = $sw->Frame;
-  $okbutton = $f->Button(-text => __("Load"), -state => "disabled",
+  $okbutton = $f->Button(-text => __("Load"), # -state => "disabled",
     -command => sub { 
                       if ($val) {
                         $location = $val;
@@ -2577,18 +2598,17 @@ sub update_loaded_location_string {
   my @tags = sort keys %repos;
   my @vals;
   if ($#tags > 0) {
-    @vals = map { "$_:$repos{$_}" } sort sort_main_first @tags;
+    @vals = map {
+      "$_:$repos{$_} (" .
+      ($remotetlpdb->virtual_get_tlpdb($_)->is_verified ?
+        __("verified") : __("not verified")) . ")"
+    } sort sort_main_first @tags;
   } else {
+    $arg .= " (" . ($remotetlpdb->is_verified ?
+      __("verified") : __("not verified")) . ")";
     @vals = ( $arg );
   }
-  my $locstr;
   if ($#tags > 0) {
-    $locstr = $repos{'main'};
-    for my $t (keys %repos) {
-      if ($t ne 'main') {
-        $locstr .= " $repos{$t}";
-      }
-    }
     $loaded_text_button->configure(-text => __("multiple repositories"));
   } else {
     $loaded_text_button->configure(-text => $arg);
@@ -2626,8 +2646,10 @@ sub run_update_functions {
 sub check_location_on_ctan {
   # we want to check that if mirror.ctan.org
   # is used that we select a mirror once
-  if ($location =~ m/$TeXLive::TLConfig::TeXLiveServerURL/) {
-    $location = TeXLive::TLUtils::give_ctan_mirror();
+  for my $k (keys %repos) {
+    if ($repos{$k} =~ m/$TeXLive::TLConfig::TeXLiveServerURL/) {
+      $repos{$k} = TeXLive::TLUtils::give_ctan_mirror();
+    }
   }
 }
 

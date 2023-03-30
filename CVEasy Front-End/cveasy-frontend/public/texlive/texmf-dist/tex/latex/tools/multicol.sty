@@ -9,10 +9,10 @@
 %% This is a generated file.
 %% 
 %% The source is maintained by the LaTeX Project team and bug
-%% reports for it can be opened at http://latex-project.org/bugs.html
+%% reports for it can be opened at https://latex-project.org/bugs/
 %% (but please observe conditions on bug reports sent to that address!)
 %% 
-%% Copyright 1993-2015
+%% Copyright (C) 1993-2019
 %% The LaTeX3 Project and any individual authors listed elsewhere
 %% in this file.
 %% 
@@ -23,7 +23,7 @@
 %% conditions of the LaTeX Project Public License, either version 1.3c
 %% of this license or (at your option) any later version.
 %% The latest version of this license is in
-%%    http://www.latex-project.org/lppl.txt
+%%    https://www.latex-project.org/lppl.txt
 %% and version 1.3c or later is part of all distributions of LaTeX
 %% version 2005/12/01 or later.
 %% 
@@ -35,7 +35,7 @@
 %% given in the file `manifest.txt'.
 %% 
 %% Package `multicol' to use with LaTeX2e
-%% Copyright 1989-2015 Frank Mittelbach
+%% Copyright 1989-2019 Frank Mittelbach
 %%
 %%  In addition to the terms of LPPL any distributed version
 %%  (unchanged or modified) of multicol has to keep the statement
@@ -98,25 +98,16 @@
 %%
 %%     Frank.Mittelbach@latex-project.org
 %%
-\NeedsTeXFormat{LaTeX2e}[1997/12/01]
+\NeedsTeXFormat{LaTeX2e}[2018-04-01]
+
+\providecommand\DeclareRelease[3]{}
+\providecommand\DeclareCurrentRelease[2]{}
+
+\DeclareRelease{}{2017-04-11}{multicol-2017-04-11.sty}
+\DeclareCurrentRelease{}{2018-04-01}
+
 \ProvidesPackage{multicol}
-          [2015/08/19 v1.8n  multicolumn formatting (FMi)]
-%% \CheckSum{1894}
-%% \CharacterTable
-%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%%   Digits        \0\1\2\3\4\5\6\7\8\9
-%%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%%   Dollar        \$     Percent       \%     Ampersand     \&
-%%   Acute accent  \'     Left paren    \(     Right paren   \)
-%%   Asterisk      \*     Plus          \+     Comma         \,
-%%   Minus         \-     Point         \.     Solidus       \/
-%%   Colon         \:     Semicolon     \;     Less than     \<
-%%   Equals        \=     Greater than  \>     Question mark \?
-%%   Commercial at \@     Left bracket  \[     Backslash     \\
-%%   Right bracket \]     Circumflex    \^     Underscore    \_
-%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%%   Right brace   \}     Tilde         \~}
+          [2019/03/01 v1.8w  multicolumn formatting (FMi)]
 %%
 \DeclareOption{twocolumn}
    {\PackageWarning{multicol}{May not work
@@ -273,6 +264,15 @@
     \output{\multi@column@out}%
     \init@mult@footins
     \reinsert@footnotes
+   \def\clearpage{%
+     \ifx\@deferlist\@empty\else
+       \PackageError{multicol}%
+          {Deferred floats not cleared}%
+          {A \string\clearpage\space inside multicols acts like
+           \string\newpage\space and doesn't clear floats.\MessageBreak
+           Move it before the multicols environment if you need it.}%
+     \fi
+    \newpage}%
   \fi
   \vbadness\@Mi \hbadness5000
   \tolerance\multicoltolerance
@@ -302,6 +302,7 @@
     #1\advance\vsize
         \c@collectmore\baselineskip}
 \newdimen\multicol@leftmargin
+\mathchardef\@Mvi=10006  % 10005 is \columnbreak
 \def\endmulticols{\par
   \if@boxedmulticols
     \remove@discardable@items\color@endgroup\egroup
@@ -327,9 +328,8 @@
                  break(s) for splitting}%
         \unvbox\colbreak@box\fi
     \fi
-   \penalty\z@
-   \output{\balance@columns@out}%
-   \eject
+    \penalty\z@
+    \penalty-\@Mvi
     \ifvbox\partial@page
          \unvbox\partial@page\fi
      \global\let\kept@firstmark\@empty
@@ -340,7 +340,9 @@
   \@checkend{multicols}%
   \endgroup
   \global\c@unbalance\z@
-  \if@boxedmulticols\else
+  \if@boxedmulticols
+    \mc@col@status@write
+  \else
     \reinsert@footnotes
     \ifdim \pagegoal=\maxdimen
       \global\vsize\@colroom
@@ -370,7 +372,6 @@
 \newbox\last@line
 \c@unbalance   = 0
 \c@collectmore = 0
-\col@number = 1
 \multicoltolerance = 9999
 \multicolpretolerance = -1
 \premulticols = 50pt
@@ -440,7 +441,7 @@
    \ifvoid\footins \else
       \leave@mult@footins
    \fi
-   \let\ifshr@kingsaved\ifshr@king
+
    \ifvbox \@kludgeins
      \advance \dimen@ -\ht\@kludgeins
      \ifdim \wd\@kludgeins>\z@
@@ -462,7 +463,6 @@
    \setbox\mult@rightbox\vbox to\dimen@
           {\unvbox\mult@rightbox
            \ifshr@nking\vfilmaxdepth\fi}%
-   \let\ifshr@king\ifshr@kingsaved
    \ifvoid\@cclv \else
        \unvbox\@cclv
        \ifnum\outputpenalty=\@M
@@ -503,6 +503,7 @@
         Produce bot mark:\MessageBreak
           \meaning\botmark
          \@gobbletwo}%
+   \boxmaxdepth\maxdimen
    \setbox\@cclv\vbox{\unvbox\partial@page
                       \page@sofar}%
    \@makecol\@outputpage
@@ -559,14 +560,20 @@
          }%
          \reinsert@footnotes
      \else
+       \ifnum\outputpenalty = -\@Mvi
+         \mult@info\@ne{End penalty of multicols seen}%
+         \outputpenalty\@M   % pretend we had a natural forced break
+         \balance@columns@out
+       \else
         \PackageWarningNoLine{multicol}%
            {Floats and marginpars not
             allowed inside `multicols'
             environment!}%
         \unvbox\@cclv\reinsert@footnotes
-       \xdef\@freelist{\@freelist\@currlist}%
-       \gdef\@currlist{}%
-     \fi
+        \xdef\@freelist{\@freelist\@currlist}%
+        \gdef\@currlist{}%
+      \fi
+    \fi
   \fi
  \else \@doclearpage \fi
 }
@@ -604,7 +611,9 @@
      \setbox\@cclv\vbox
          {\vskip\topskip
           \vskip-\splittopskip
-          \unvbox\mult@box}%
+          \unvbox\mult@box
+          \penalty-\@Mvi
+         }%
      \multi@column@out
    \else
      \global\vsize\@colroom
@@ -640,6 +649,15 @@
    \advance\dimen@\topskip
    \ifdim \dimen@ >\@tempdima
      \advance\dimen@-\baselineskip
+   \fi
+   \@tempdima\dimexpr
+       \topskip +\c@minrows\baselineskip-\baselineskip\relax
+   \ifnum\dimen@<\@tempdima
+     \mult@info\@ne
+       {Start value
+          \the\dimen@  \space ->
+          \the\@tempdima \space (corrected for minrows)}%
+     \dimen@\@tempdima
    \fi
    \advance\dimen@\c@unbalance\baselineskip
    \mult@info\@ne
@@ -905,6 +923,8 @@
 \def\too@badtrue{\global\let\iftoo@bad\iftrue}
 \def\too@badfalse{\global\let\iftoo@bad\iffalse}
 \newif\ifforcedbreak@leftover
+\newcount\c@minrows
+\c@minrows=1
 \newcount\c@columnbadness
 \c@columnbadness=10000
 \newcount\c@finalcolumnbadness
@@ -931,12 +951,13 @@
         not make sense.\MessageBreak
         Going to balance anyway}%
    \else
-     \let\balance@columns@out
-         \multi@column@out
+     \def\balance@columns@out
+         {\multi@column@out \penalty-\@Mvi }%
    \fi
    \begin{multicols}
 }
 \@namedef{endmulticols*}{%
+   \par
    \ifdim\lastskip>\z@ \vskip-\lastskip \fi
    \ifdim \prevdepth>\z@
      \vskip-\ifdim\prevdepth>\boxmaxdepth
@@ -1011,7 +1032,7 @@
 \LRmulticolcolumns
 \newcount\mc@col@check@num
 
-\newcommand\docolaction[4][1]{%
+\newcommand\docolaction{%
  \ifx\mc@col@status@write\relax
      \PackageError{multicol}%
       {Option 'colaction' not selected}%
@@ -1026,7 +1047,17 @@
                    0\else
    \csname mc@col-\the\mc@col@check@num
    \endcsname
-                    \fi}%
+   \fi}%
+ \@ifstar
+   {\@docolactionstartrue \@docolaction}%
+   {\@docolactionstarfalse\@docolaction}%
+}
+\newcommand\@docolaction[4][1]{%
+ \edef\@docolactioncheck{\write\@auxout
+   {\string\mc@set@col@status
+     {mc@col-\the\mc@col@check@num}%
+     {\mc@col@type}}}%
+ \if@docolactionstar \@docolactioncheck \fi
  \ifcase \mc@col@type\relax
      \ifcase #1\or #2\or#3\or#4\fi
   \or
@@ -1036,14 +1067,11 @@
   \or
      #4%  % 3 last col
   \else
-    \ERROR
+    \ERRORwrongdefaultgiven
   \fi
-  \edef\next{\write\@auxout
-     {\string\mc@set@col@status
-      {mc@col-\the\mc@col@check@num}%
-      {\mc@col@type}}}%
-  \next
+ \if@docolactionstar \else \@docolactioncheck \fi
 }
+\newif\if@docolactionstar
 \def\mc@col@status#1{%
     \gdef\mc@curr@col@status{#1}}
 \def\mc@set@col@status#1#2{%

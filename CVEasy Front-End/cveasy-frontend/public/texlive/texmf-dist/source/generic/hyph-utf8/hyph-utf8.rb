@@ -54,6 +54,7 @@ class HyphEncoding
 	attr_reader :encoding_name, :unicode_characters, :unicode_characters_first_byte, :lowercase_characters
 
 	def convert_string_to_escaped_characters(str)
+		skip_this_string = false
 		characters = str.unpack('U*')
 		new_string = Array.new(characters.length)
 		characters.each_index do |i|
@@ -65,6 +66,9 @@ class HyphEncoding
 					new_string[i] = [c].pack('U')
 				elsif c == 8217 # ’
 					new_string[i] = "'"
+				elsif (c == 0x01FD or c == 0x0301) and @encoding_name == 'ec'
+					skip_this_string = true
+					new_string[i] = sprintf("[U+%04X]", c)
 				else
 					puts sprintf("There must be an error: character U+%04X in string '%s' is not ASCII or %s.", c, str, @encoding_name.upcase)
 				end
@@ -73,13 +77,16 @@ class HyphEncoding
 				new_string[i] = sprintf("^^%x", uc.code_enc)
 			end
 		end
+		if skip_this_string
+			new_string.unshift("% ")
+		end
 		return new_string.join('')
 	end
 
 private
 	def read_data
 		# fetch the characters
-		encoding_data_dir = File.expand_path("data/encodings")
+		encoding_data_dir = File.expand_path("../data/encodings", __FILE__)
 		filename = "#{encoding_data_dir}/#{@encoding_name}.dat"
 
 		if File.exists?(filename) then

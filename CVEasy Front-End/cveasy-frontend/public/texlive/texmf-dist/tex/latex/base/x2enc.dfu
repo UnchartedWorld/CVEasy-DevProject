@@ -9,11 +9,11 @@
 %% This is a generated file.
 %% 
 %% The source is maintained by the LaTeX Project team and bug
-%% reports for it can be opened at http://latex-project.org/bugs.html
+%% reports for it can be opened at https://latex-project.org/bugs.html
 %% (but please observe conditions on bug reports sent to that address!)
 %% 
 %% 
-%% Copyright 1993-2015
+%% Copyright (C) 1993-2019
 %% The LaTeX3 Project and any individual authors listed elsewhere
 %% in this file.
 %% 
@@ -24,9 +24,9 @@
 %% conditions of the LaTeX Project Public License, either version 1.3c
 %% of this license or (at your option) any later version.
 %% The latest version of this license is in
-%%    http://www.latex-project.org/lppl.txt
+%%    https://www.latex-project.org/lppl.txt
 %% and version 1.3c or later is part of all distributions of LaTeX
-%% version 2005/12/01 or later.
+%% version 2008 or later.
 %% 
 %% This file has the LPPL maintenance status "maintained".
 %% 
@@ -42,7 +42,7 @@
 %% and covered by LPPL is defined by the unpacking scripts (with
 %% extension .ins) which are part of the distribution.
   \ProvidesFile{x2enc.dfu}
-   [2015/09/07 v1.1p UTF-8 support for inputenc]
+   [2019/07/11 v1.2j UTF-8 support for inputenc]
 \DeclareUnicodeCharacter{00A4}{\textcurrency}
 \DeclareUnicodeCharacter{00A7}{\textsection}
 \DeclareUnicodeCharacter{00AB}{\guillemotleft}
@@ -230,8 +230,8 @@
 \DeclareUnicodeCharacter{04DF}{\"\cyrz}
 \DeclareUnicodeCharacter{04E0}{\CYRABHDZE}
 \DeclareUnicodeCharacter{04E1}{\cyrabhdze}
-\DeclareUnicodeCharacter{04E2}{\=\CYRI}
-\DeclareUnicodeCharacter{04E3}{\=\cyri}
+\DeclareUnicodeCharacter{04E2}{\@tabacckludge=\CYRI}
+\DeclareUnicodeCharacter{04E3}{\@tabacckludge=\cyri}
 \DeclareUnicodeCharacter{04E4}{\"\CYRI}
 \DeclareUnicodeCharacter{04E5}{\"\cyri}
 \DeclareUnicodeCharacter{04E6}{\"\CYRO}
@@ -240,8 +240,8 @@
 \DeclareUnicodeCharacter{04E9}{\cyrotld}
 \DeclareUnicodeCharacter{04EC}{\"\CYREREV}
 \DeclareUnicodeCharacter{04ED}{\"\cyrerev}
-\DeclareUnicodeCharacter{04EE}{\=\CYRU}
-\DeclareUnicodeCharacter{04EF}{\=\cyru}
+\DeclareUnicodeCharacter{04EE}{\@tabacckludge=\CYRU}
+\DeclareUnicodeCharacter{04EF}{\@tabacckludge=\cyru}
 \DeclareUnicodeCharacter{04F0}{\"\CYRU}
 \DeclareUnicodeCharacter{04F1}{\"\cyru}
 \DeclareUnicodeCharacter{04F2}{\H\CYRU}
@@ -268,7 +268,8 @@
 \DeclareUnicodeCharacter{2329}{\textlangle}
 \DeclareUnicodeCharacter{232A}{\textrangle}
 \DeclareUnicodeCharacter{2423}{\textvisiblespace}
-
+\DeclareUnicodeCharacter{27E8}{\textlangle}
+\DeclareUnicodeCharacter{27E9}{\textrangle}
 \endinput
 %%
 %% End of file `x2enc.dfu'.
