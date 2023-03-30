@@ -1,17 +1,12 @@
 import { Box } from "@mui/system";
 import "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/mode-latex";
 import "ace-builds/src-noconflict/snippets/latex";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-monokai";
 import AceEditor from "react-ace";
-import {
-  Button,
-  Grid,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import "ace-builds/src-noconflict/ext-searchbox";
+import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { brandPrimary } from "../CustomColors";
 import {
   ArrowCircleRight,
@@ -19,9 +14,29 @@ import {
   CleaningServices,
   Download,
 } from "@mui/icons-material";
+import { useState } from "react";
+
+export var pdfURL: string | URL | undefined;
 
 export default function LaTeXAce() {
+  const [input, setInput] = useState("");
 
+  function onChange(newVal: any) {
+    setInput(newVal);
+  }
+
+  const compileTeX = () => {
+    var texlive = new (TeXLive as any)();
+    var pdftex = texlive.pdftex;
+
+    pdftex
+      .compile(input)
+      .then(function (pdf_dataurl: string | URL | undefined) {
+        pdfURL = pdf_dataurl;
+        console.log(pdfURL);
+        window.open(pdfURL);
+      });
+  };
 
   return (
     <Box component={"section"}>
@@ -31,7 +46,6 @@ export default function LaTeXAce() {
         sx={{
           marginTop: "-1rem",
           backgroundColor: brandPrimary[200],
-          marginLeft: "0.05rem",
         }}
       >
         <Grid item xs={8} md={8} sm={12}>
@@ -39,7 +53,7 @@ export default function LaTeXAce() {
             className="editor-title"
             component={"h3"}
             variant={"h3"}
-            sx={{ fontSize: "1.5rem" }}
+            sx={{ fontSize: "1.5rem", paddingLeft: "1rem" }}
           >
             CVEasy LaTeX editor:
           </Typography>
@@ -67,7 +81,10 @@ export default function LaTeXAce() {
         </Grid>
         <Grid item xs={1}>
           <Tooltip title="Compile code">
-            <IconButton aria-label="Icon that compiles your given LaTeX code">
+            <IconButton
+              aria-label="Icon that compiles your given LaTeX code"
+              onClick={compileTeX}
+            >
               <ArrowCircleRight />
             </IconButton>
           </Tooltip>
@@ -77,10 +94,11 @@ export default function LaTeXAce() {
       <AceEditor
         name="editor"
         mode="latex"
-        value="test"
+        value={input}
+        onChange={onChange}
         theme="monokai"
-        height="90vh"
-        width="49.55vw"
+        height="100dvh"
+        width="100vw"
         fontSize="1.1rem"
         enableBasicAutocompletion={true}
         enableLiveAutocompletion={true}
