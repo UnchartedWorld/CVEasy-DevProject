@@ -1,6 +1,6 @@
 using CVEasy_API.Data;
+using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
-using CVEasy_API.Model;
 
 namespace CVEasy_API.Services;
 
@@ -13,10 +13,23 @@ public class CommentsService : IComments
         _dataContext = commentsData;
     }
 
-    public List<TableComments> GetComments()
+    public GetCommentPaging GetAllComments(GetAllCommentsRequest commentsRequest)
     {
-        var result = _dataContext.TableComments.ToList();
-        return result;
-    }
+        var listComments = _dataContext.TableComments.AsQueryable();
 
+        var allComments = listComments.Skip(commentsRequest.commentIndex * commentsRequest.commentSize)
+            .Take(commentsRequest.commentSize)
+            .Select(x => new GetCommentResponse
+            {
+                commentID = x.commentID,
+                comment = x.comment
+            }).ToList();
+
+        var response = new GetCommentPaging
+        {
+            TotalComments = listComments.Count(),
+            comments = allComments
+        };
+        return response;
+    }
 }
