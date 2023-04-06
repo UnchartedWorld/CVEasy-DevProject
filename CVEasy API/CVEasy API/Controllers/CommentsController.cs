@@ -1,3 +1,4 @@
+using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,6 @@ namespace CVEasy_API.Controllers
         }
         // GET: api/Comments
         [HttpGet]
-        public IActionResult Get()
-        {
-            var dataResult = _comments.GetComments();
-            return Ok(new { code = 200, message = "Data retrieved, showing comments", data = dataResult });
-        }
 
         // // GET: api/Comments/5
         // [HttpGet("{id}", Name = "Get")]
@@ -33,6 +29,13 @@ namespace CVEasy_API.Controllers
         [HttpPost]
         public void Post([FromBody] string value)
         {
+        }
+
+        [HttpPost("GetAllComments")]
+        public IActionResult GetComments([FromBody] GetAllCommentsRequest commentsRequest)
+        {
+            var dataResult = _comments.GetAllComments(commentsRequest);
+            return Ok(new { code = 200, message = "Data received for comments.", data = dataResult });
         }
 
         // PUT: api/Comments/5
