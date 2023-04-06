@@ -31,7 +31,7 @@ namespace CVEasy_API.Services
             {
                 // using contains to get the themes with the ID specified in the search
                 // current db structure means 1 theme only has 1 ID
-                listThemes = listThemes.Where(x => request.tagIDs.Contains(x.tagIDs));
+                listThemes = listThemes.Where(x => request.tagIDs.Contains(x.tagID));
             }
             if (!string.IsNullOrEmpty(request.createdByName))
             {
@@ -82,7 +82,7 @@ namespace CVEasy_API.Services
                 // notice how we use listThemes here and not allValidThemes
                 // this is because if we count allValidThemes, it will just return the pageSize because we only take that many
                 // and we need the total Records for paging, not just the amount we take
-                totalRecords = listThemes.Count(),
+                TotalRecords = listThemes.Count(),
                 themes = allValidThemes
             };
             return response;
