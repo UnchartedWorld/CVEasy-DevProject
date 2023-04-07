@@ -1,6 +1,8 @@
 using CVEasy_API.Data;
 using CVEasy_API.DTOs;
+using CVEasy_API.Helpers;
 using CVEasy_API.Interfaces;
+using CVEasy_API.Model;
 
 namespace CVEasy_API.Services
 {
@@ -12,6 +14,21 @@ namespace CVEasy_API.Services
         public ThemeService(DataContext context)
         {
             _context = context;
+        }
+
+        public void UploadTheme(UploadRequest uploadRequest)
+        {
+            var upload = FileUpload.SaveTemplate(uploadRequest.File);
+            var newUpload = new TableThemes
+            {
+                createdBy_UserID = uploadRequest.UserID,
+                themeName = uploadRequest.ThemeTitle,
+                themeDescr = uploadRequest.ThemeDescr,
+                themeFile = upload,
+                version = uploadRequest.ThemeVersion
+            };
+            _context.TableThemes.Add(newUpload);
+            _context.SaveChanges();
         }
 
         public GetThemePaging GetAllThemes(GetAllThemesRequest request)
@@ -72,6 +89,7 @@ namespace CVEasy_API.Services
                                         createdByID = x.createdBy_UserID,
                                         themeName = x.themeName,
                                         themeDescr = x.themeDescr,
+                                        themeFile = x.themeFile,
                                         deletedDate = x.deletedDate,
                                         version = x.version
                                     }).ToList();
