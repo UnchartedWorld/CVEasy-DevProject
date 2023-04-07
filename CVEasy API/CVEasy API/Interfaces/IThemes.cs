@@ -1,4 +1,5 @@
 using CVEasy_API.DTOs;
+using CVEasy_API.Model;
 
 namespace CVEasy_API.Interfaces
 {
@@ -6,5 +7,7 @@ namespace CVEasy_API.Interfaces
     {
         // returning with paging
         public GetThemePaging GetAllThemes(GetAllThemesRequest request);
+        // Adds ability to upload theme
+        public void UploadTheme(UploadRequest uploadRequest);
     }
 }
