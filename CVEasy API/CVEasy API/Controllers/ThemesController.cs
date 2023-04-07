@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CVEasy_API.DTOs;
+using CVEasy_API.Helpers;
 using CVEasy_API.Interfaces;
+using CVEasy_API.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +42,15 @@ namespace CVEasy_API.Controllers
         {
             var dataResult = _themes.GetAllThemes(allThemesRequest);
             return Ok(new { code = 200, message = "Data received for themes.", data = dataResult });
+        }
+
+        [HttpPost("Upload Template")]
+
+        public IActionResult Upload([FromForm] UploadRequest texFile)
+        {
+            _themes.UploadTheme(texFile);
+
+            return Ok("File has been uploaded");
         }
 
         // PUT: api/Theme/5
