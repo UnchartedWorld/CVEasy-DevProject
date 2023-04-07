@@ -10,6 +10,7 @@ public class TableThemes
     public int createdBy_UserID { get; set; }
     public string themeName { get; set; }
     public string themeDescr { get; set; }
+    public string themeFile { get; set; }
     public DateTime deletedDate { get; set; }
     public string version { get; set; }
 }
