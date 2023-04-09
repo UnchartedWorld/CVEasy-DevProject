@@ -1,5 +1,6 @@
 using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
+using CVEasy_API.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVEasy_API.Controllers
@@ -16,32 +17,38 @@ namespace CVEasy_API.Controllers
             _comments = comments;
         }
         // GET: api/Comments
-        [HttpGet]
-
+        //[HttpGet]
         // // GET: api/Comments/5
         // [HttpGet("{id}", Name = "Get")]
         // public string Get(int id)
         // {
         //     return "value";
         // }
-
-        // POST: api/Comments
-        [HttpPost]
-        public void Post([FromBody] string value)
+        
+        // PATCH: api/RemoveComment
+        [HttpPatch("RemoveComment")]
+        public IActionResult RemoveComment([FromForm] CommentRemoveRequest removeRequest)
         {
-        }
+            _comments.RemoveComment(removeRequest);
 
+            return Ok("Comment has been deleted, thank you");
+        }
+        
+        // POST: api/PostComment
+        [HttpPost("PostComment")]
+        public IActionResult PostComment([FromForm] CommentRequest commentRequest)
+        {
+            _comments.SubmitComment(commentRequest);
+
+            return Ok("Nice, your comment is as such: " + commentRequest.Comment);
+        }
+        
+        // POST: api/GetAllComments
         [HttpPost("GetAllComments")]
-        public IActionResult GetComments([FromBody] GetAllCommentsRequest commentsRequest)
+        public IActionResult GetComments([FromForm] GetAllCommentsRequest commentsRequest)
         {
             var dataResult = _comments.GetAllComments(commentsRequest);
             return Ok(new { code = 200, message = "Data received for comments.", data = dataResult });
-        }
-
-        // PUT: api/Comments/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
         }
 
         // DELETE: api/Comments/5
