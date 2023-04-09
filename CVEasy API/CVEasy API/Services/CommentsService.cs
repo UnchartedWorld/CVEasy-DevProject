@@ -1,6 +1,7 @@
 using CVEasy_API.Data;
 using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
+using CVEasy_API.Model;
 
 namespace CVEasy_API.Services;
 
@@ -22,6 +23,7 @@ public class CommentsService : IComments
             .Select(x => new GetCommentResponse
             {
                 commentID = x.commentID,
+                themeID = x.themeID,
                 comment = x.comment
             }).ToList();
 
@@ -31,5 +33,29 @@ public class CommentsService : IComments
             comments = allComments
         };
         return response;
+    }
+
+    public void SubmitComment(CommentRequest commentRequest)
+    {
+        var newComment = new TableComments
+        {
+            themeID = commentRequest.ThemeID,
+            userID = commentRequest.UserID,
+            comment = commentRequest.Comment
+        };
+        _dataContext.TableComments.Add(newComment);
+        _dataContext.SaveChanges();
+    }
+//TODO - Implement update method. Almost there, just needs some stuff added.
+    public void RemoveComment(CommentRemoveRequest commentRemoveRequest)
+    {
+        var commentByUser = _dataContext.TableComments.FirstOrDefault((x =>
+            (x.userID == commentRemoveRequest.UserID && x.themeID == commentRemoveRequest.ThemeID)));
+
+        if (commentByUser == null) return null;
+
+        var deletedString = "[Deleted]";
+        
+        var 
     }
 }
