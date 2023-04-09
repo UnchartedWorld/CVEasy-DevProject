@@ -6,5 +6,7 @@ public class TableComments
 {
     [Key]
     public int commentID { get; set; }
-    public byte[] comment { get; set; }
+    public int themeID { get; set; }
+    public int userID { get; set; }
+    public string comment { get; set; }
 }
