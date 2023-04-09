@@ -19,7 +19,7 @@ namespace CVEasy_API.Controllers
 
         // POST: api/User
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] UserLoginRequest loginRequest)
+        public IActionResult Login([FromForm] UserLoginRequest loginRequest)
         {
             var user = _user.GetUser(loginRequest);
             if (user == null)
@@ -32,7 +32,7 @@ namespace CVEasy_API.Controllers
         }
 
         [HttpPost("Register")]
-        public IActionResult Register([FromBody] UserRegistrationRequest registrationRequest)
+        public IActionResult Register([FromForm] UserRegistrationRequest registrationRequest)
         {
             _authentication.RegisterUser(registrationRequest);
 

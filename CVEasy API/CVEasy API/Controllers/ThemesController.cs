@@ -25,11 +25,11 @@ namespace CVEasy_API.Controllers
         // GET: api/Theme
 
         // // GET: api/Theme/5
-        // [HttpGet("{id}", Name = "Get")]
-        // public string Get(int id)
-        // {
-        //     return "value";
-        // }
+        [HttpGet("{id}", Name = "Get")]
+        public string Get(int id) 
+        { 
+            return "value";
+        }
 
         // POST: api/Theme
         [HttpPost]
@@ -38,7 +38,7 @@ namespace CVEasy_API.Controllers
         }
         
         [HttpPost("GetAllThemes")]
-        public IActionResult GetThemes([FromBody] GetAllThemesRequest allThemesRequest)
+        public IActionResult GetThemes([FromForm] GetAllThemesRequest allThemesRequest)
         {
             var dataResult = _themes.GetAllThemes(allThemesRequest);
             return Ok(new { code = 200, message = "Data received for themes.", data = dataResult });
