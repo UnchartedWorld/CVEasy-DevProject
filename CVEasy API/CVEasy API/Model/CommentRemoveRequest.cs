@@ -6,4 +6,5 @@ public class CommentRemoveRequest
 {
     [Required] public int UserID { get; set; }
     [Required] public int ThemeID { get; set; }
+    [Required] public int CommentId { get; set; }
 }
