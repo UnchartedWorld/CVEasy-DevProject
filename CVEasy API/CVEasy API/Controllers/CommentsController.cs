@@ -40,7 +40,7 @@ namespace CVEasy_API.Controllers
         {
             _comments.SubmitComment(commentRequest);
 
-            return Ok("Nice, your comment is as such: " + commentRequest.Comment);
+            return Ok("Nice, your comment is as such: " + commentRequest.Comment + ", and is from the UserID: " + commentRequest.UserID);
         }
         
         // POST: api/GetAllComments
