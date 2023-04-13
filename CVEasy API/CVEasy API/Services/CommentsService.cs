@@ -46,16 +46,22 @@ public class CommentsService : IComments
         _dataContext.TableComments.Add(newComment);
         _dataContext.SaveChanges();
     }
-//TODO - Implement update method. Almost there, just needs some stuff added.
+    
+    /// <summary>
+    /// Changes a desired comment's body from whatever it was to [Deleted], similar to Reddit
+    /// </summary>
+    /// <param name="commentRemoveRequest">A model class representing the comment removal request</param>
     public void RemoveComment(CommentRemoveRequest commentRemoveRequest)
     {
         var commentByUser = _dataContext.TableComments.FirstOrDefault((x =>
-            (x.userID == commentRemoveRequest.UserID && x.themeID == commentRemoveRequest.ThemeID)));
+            (x.userID == commentRemoveRequest.UserID && x.themeID == commentRemoveRequest.ThemeID &&
+             x.commentID == commentRemoveRequest.CommentId)));
 
-        if (commentByUser == null) return null;
+        if (commentByUser == null) return;
 
-        var deletedString = "[Deleted]";
-        
-        var 
+        commentByUser.comment = "[Deleted]";
+
+        _dataContext.TableComments.Update(commentByUser);
+        _dataContext.SaveChanges();
     }
 }
