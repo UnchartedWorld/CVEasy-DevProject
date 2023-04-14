@@ -6,7 +6,7 @@ using CVEasy_API.Model;
 
 namespace CVEasy_API.Services
 {
-    public class ThemeService: IThemes
+    public class ThemeService : IThemes
     {
         private DataContext _context;
 
@@ -31,6 +31,27 @@ namespace CVEasy_API.Services
             _context.SaveChanges();
         }
 
+        public GetThemeResponse GetTheme(GetThemeRequest themeRequest)
+        {
+            var requestedTheme = _context.TableThemes.FirstOrDefault(x =>
+                x.themeID == themeRequest.ThemeID);
+
+            var file = FileUpload.ReadTemplate(requestedTheme.themeFile);
+
+            var response = new GetThemeResponse
+            {
+                themeID = themeRequest.ThemeID,
+                themeName = requestedTheme.themeName,
+                themeDescr = requestedTheme.themeDescr,
+                themeFile = file,
+                createdByID = requestedTheme.createdBy_UserID,
+                deletedDate = requestedTheme.deletedDate,
+                version = requestedTheme.version
+            };
+
+            return response;
+        }
+
         public GetThemePaging GetAllThemes(GetAllThemesRequest request)
         {
             // first, get list of Themes that haven't been deleted yet
@@ -44,18 +65,22 @@ namespace CVEasy_API.Services
                 // add ToLower to negate case differences
                 listThemes = listThemes.Where(x => x.themeName.ToLower().Contains(request.themeName.ToLower()));
             }
+
             if (request.tagIDs.Any())
             {
                 // using contains to get the themes with the ID specified in the search
                 // current db structure means 1 theme only has 1 ID
                 listThemes = listThemes.Where(x => request.tagIDs.Contains(x.tagID));
             }
+
             if (!string.IsNullOrEmpty(request.createdByName))
             {
                 // similar principle to filter themeName
                 // get all of the IDs of the Users with similar loginName
                 // notice how we use AsQueryable again to let this stuck in limbo under the db
-                var listUserIDs = _context.TableUser.Where(x => x.loginName.ToLower().Contains(request.createdByName.ToLower())).Select(x => x.userID).AsQueryable();
+                var listUserIDs = _context.TableUser
+                    .Where(x => x.loginName.ToLower().Contains(request.createdByName.ToLower())).Select(x => x.userID)
+                    .AsQueryable();
 
                 // now use those UserIDs to filter in the themes
                 listThemes = listThemes.Where(x => listUserIDs.Contains(x.createdBy_UserID));
@@ -80,19 +105,19 @@ namespace CVEasy_API.Services
             // this is to skip the themes from the previous page (or skip nothing if pageIndex = 0)
             // i.e: each page has 10, we're at page 2 => skip 20
             var allValidThemes = listThemes.Skip(request.pageIndex * request.pageSize)
-            // this is to take the amount each page has
-            // i,e: each page has 10 => get 10
-                                    .Take(request.pageSize)
-                                    .Select(x => new GetThemeResponse
-                                    {
-                                        themeID = x.themeID,
-                                        createdByID = x.createdBy_UserID,
-                                        themeName = x.themeName,
-                                        themeDescr = x.themeDescr,
-                                        themeFile = x.themeFile,
-                                        deletedDate = x.deletedDate,
-                                        version = x.version
-                                    }).ToList();
+                // this is to take the amount each page has
+                // i,e: each page has 10 => get 10
+                .Take(request.pageSize)
+                .Select(x => new GetThemeResponse
+                {
+                    themeID = x.themeID,
+                    createdByID = x.createdBy_UserID,
+                    themeName = x.themeName,
+                    themeDescr = x.themeDescr,
+                    themeFile = x.themeFile,
+                    deletedDate = x.deletedDate,
+                    version = x.version
+                }).ToList();
 
             // finally, we just need to convert the result to the necessary response type
             var response = new GetThemePaging
@@ -105,7 +130,5 @@ namespace CVEasy_API.Services
             };
             return response;
         }
-
-
     }
 }
