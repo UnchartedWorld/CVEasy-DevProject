@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace CVEasy_API.Helpers;
 
 public static class FileUpload
@@ -25,7 +27,7 @@ public static class FileUpload
             return null;
         }
 
-        var readText = File.ReadAllText("Templates/" + fileName + ".tex");
+        var readText = File.ReadAllText("Templates/" + fileName + ".tex", Encoding.UTF8);
         return readText;
     }
 }
