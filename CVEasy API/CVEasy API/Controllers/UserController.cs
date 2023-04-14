@@ -1,6 +1,6 @@
 using CVEasy_API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using CVEasy_API.Model;
+using CVEasy_API.DTOs;
 
 namespace CVEasy_API.Controllers
 {
