@@ -31,6 +31,13 @@ namespace CVEasy_API.Controllers
             return "value";
         }
 
+        [HttpPost("GetTemplate")]
+        public IActionResult GetTheme([FromForm] GetThemeRequest themeRequest)
+        {
+            var result = _themes.GetTheme(themeRequest);
+            return Ok(new { code = 200, message = "Returning theme: ", data = result });
+        }
+
         // POST: api/Theme
         [HttpPost]
         public void Post([FromBody] string value)
