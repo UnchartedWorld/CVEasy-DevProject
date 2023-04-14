@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CVEasy_API.Model;
+namespace CVEasy_API.DTOs;
 
 public class UploadRequest
 {
