@@ -1,4 +1,4 @@
-using CVEasy_API.Model;
+using CVEasy_API.DTOs;
 
 namespace CVEasy_API.Interfaces;
 
