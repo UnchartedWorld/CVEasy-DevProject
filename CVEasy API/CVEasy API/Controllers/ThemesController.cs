@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CVEasy_API.DTOs;
-using CVEasy_API.Helpers;
 using CVEasy_API.Interfaces;
-using CVEasy_API.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVEasy_API.Controllers
@@ -21,29 +14,25 @@ namespace CVEasy_API.Controllers
         {
             _themes = themes;
         }
-        
+
         // GET: api/Theme
 
         // // GET: api/Theme/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id) 
-        { 
-            return "value";
+        [HttpGet("{themeId:int}", Name = "GetTemplate")]
+        public OkObjectResult GetTheme(int themeId)
+        {
+            var template = _themes.GetTheme(themeId);
+            if (template == null) throw new KeyNotFoundException("Theme not found");
+            return Ok(new { code = 200, message = "Theme found, returning data: ", data = template });
         }
 
-        [HttpPost("GetTemplate")]
-        public IActionResult GetTheme([FromForm] GetThemeRequest themeRequest)
-        {
-            var result = _themes.GetTheme(themeRequest);
-            return Ok(new { code = 200, message = "Returning theme: ", data = result });
-        }
+        //[HttpPost("GetTemplate")]
+        //public IActionResult GetTheme([FromForm] GetThemeRequest themeRequest)
+        //{
+        //    var result = _themes.GetTheme(themeRequest);
+        //    return Ok(new { code = 200, message = "Returning theme: ", data = result });
+        //}
 
-        // POST: api/Theme
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-        
         [HttpPost("GetAllThemes")]
         public IActionResult GetThemes([FromForm] GetAllThemesRequest allThemesRequest)
         {
@@ -52,7 +41,6 @@ namespace CVEasy_API.Controllers
         }
 
         [HttpPost("Upload Template")]
-
         public IActionResult Upload([FromForm] UploadRequest texFile)
         {
             _themes.UploadTheme(texFile);
@@ -65,7 +53,7 @@ namespace CVEasy_API.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
-        
+
 
         // DELETE: api/Theme/5
         [HttpDelete("{id}")]
