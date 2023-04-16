@@ -31,16 +31,16 @@ namespace CVEasy_API.Services
             _context.SaveChanges();
         }
 
-        public GetThemeResponse GetTheme(GetThemeRequest themeRequest)
+        public GetThemeResponse GetTheme(int themeId)
         {
             var requestedTheme = _context.TableThemes.FirstOrDefault(x =>
-                x.themeID == themeRequest.ThemeID);
+                x.themeID == themeId);
 
             var file = FileUpload.ReadTemplate(requestedTheme.themeFile);
 
             var response = new GetThemeResponse
             {
-                themeID = themeRequest.ThemeID,
+                themeID = themeId,
                 themeName = requestedTheme.themeName,
                 themeDescr = requestedTheme.themeDescr,
                 themeFile = file,
