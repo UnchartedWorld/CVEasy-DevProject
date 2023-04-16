@@ -27,7 +27,8 @@ public static class FileUpload
             return null;
         }
 
-        var readText = File.ReadAllText("Templates/" + fileName + ".tex", Encoding.UTF8);
-        return readText;
+        string readText = File.ReadAllText("Templates/" + fileName + ".tex", Encoding.UTF8);
+        string formattedText = readText.Replace("\t", "    ");
+        return formattedText;
     }
 }
