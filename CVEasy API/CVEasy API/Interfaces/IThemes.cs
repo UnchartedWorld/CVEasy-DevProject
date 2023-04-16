@@ -9,6 +9,6 @@ namespace CVEasy_API.Interfaces
         public GetThemePaging GetAllThemes(GetAllThemesRequest request);
         // Adds ability to upload theme
         public void UploadTheme(UploadRequest uploadRequest);
-        public GetThemeResponse GetTheme(GetThemeRequest themeResponseRequest);
+        public GetThemeResponse GetTheme(int themeId);
     }
 }
