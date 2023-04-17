@@ -1,9 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using CVEasy_API.Data;
 using CVEasy_API.Interfaces;
 using CVEasy_API.DTOs;
 using CVEasy_API.Model;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CVEasy_API.Services;
 
@@ -57,4 +60,25 @@ public class AuthenticationService : IAuthentication
         _dataContext.TableUser.Add(newUser);
         _dataContext.SaveChanges();
     }
+    
+    public string GenerateJwtToken(UserListResponse user)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("YjjYgwP4JxbAbFHBCpPp");
+
+        var tokenDescriptor = new SecurityTokenDescriptor();
+
+        tokenDescriptor = new SecurityTokenDescriptor
+        {
+            // currently only store the UserID in Claims, you can store whatever info you need to pull from the current logged in User
+            // just rmb to update getting them in the AccountLogin and JWTMiddleware too
+            Subject = new ClaimsIdentity(new[] { new Claim("UserID", user.UserId.ToString()) }),
+            // token expires in 48hours
+            Expires = DateTime.UtcNow.AddHours(48),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+   
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    } 
 }
