@@ -9,6 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add HTTP context for relevant services
+builder.Services.AddHttpContextAccessor();
+
 // Add services to the container.
 builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<IComments, CommentsService>();
