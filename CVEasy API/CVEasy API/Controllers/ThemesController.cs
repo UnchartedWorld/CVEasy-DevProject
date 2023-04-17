@@ -1,5 +1,6 @@
 using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVEasy_API.Controllers
@@ -18,6 +19,7 @@ namespace CVEasy_API.Controllers
         // GET: api/Theme
 
         // // GET: api/Theme/5
+        [Helpers.Authorize]
         [HttpGet("{themeId:int}", Name = "GetTemplate")]
         public OkObjectResult GetTheme(int themeId)
         {
