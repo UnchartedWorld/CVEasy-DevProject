@@ -27,8 +27,10 @@ namespace CVEasy_API.Controllers
                 return BadRequest("Email or password is wrong.");
             }
 
+            var stringToken = _authentication.GenerateJwtToken(user);
+
             return Ok(
-                $"Login request was successful. For bug-checking reasons, we'll display the email now. {user.Email}");
+                $"Login request was successful. For bug-checking reasons, we'll display the email now. {user.Email}, token = {stringToken}");
         }
 
         [HttpPost("Register")]
