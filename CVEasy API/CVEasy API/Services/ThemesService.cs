@@ -39,6 +39,9 @@ namespace CVEasy_API.Services
             var requestedTheme = _context.TableThemes.FirstOrDefault(x =>
                 x.themeID == themeId);
 
+            var requestedThemeUsername = _context.TableUser.FirstOrDefault(x =>
+                requestedTheme != null && x.userID == requestedTheme.createdBy_UserID);
+
             var file = FileUpload.ReadTemplate(requestedTheme.themeFile);
 
             var response = new GetThemeResponse
@@ -46,6 +49,7 @@ namespace CVEasy_API.Services
                 themeID = themeId,
                 themeName = requestedTheme.themeName,
                 themeDescr = requestedTheme.themeDescr,
+                createdByUsername = requestedThemeUsername.loginName,
                 themeFile = file,
                 createdByID = requestedTheme.createdBy_UserID,
                 deletedDate = requestedTheme.deletedDate,
@@ -58,7 +62,7 @@ namespace CVEasy_API.Services
         public void RemoveTheme(int themeId)
         {
             AccountLogin userLogin = (AccountLogin)_httpContextAccessor.HttpContext.Items["UserLogin"];
-            
+
             var themeToRemove = _context.TableThemes.FirstOrDefault(x => x.themeID == themeId);
 
             if (themeToRemove?.deletedDate != null)
@@ -86,7 +90,20 @@ namespace CVEasy_API.Services
         {
             // first, get list of Themes that haven't been deleted yet
             // using AsQueryable so this query is stuck in limbo under the db until we handle more
-            var listThemes = _context.TableThemes.Where(x => x.deletedDate == null).AsQueryable();
+            var listThemes = from t in _context.TableThemes
+                from u in _context.TableUser.Where(x => t.createdBy_UserID == x.userID).DefaultIfEmpty()
+                where t.deletedDate == null
+                select new GetThemeResponse
+                {
+                    themeID = t.themeID,
+                    createdByID = t.createdBy_UserID,
+                    themeName = t.themeName,
+                    createdByUsername = u.loginName,
+                    themeDescr = t.themeDescr,
+                    themeFile = t.themeFile,
+                    deletedDate = t.deletedDate,
+                    version = t.version
+                };
 
             // if string isn't null or "" then we add themeName to the filter
             if (!string.IsNullOrEmpty(request.themeName))
@@ -95,7 +112,7 @@ namespace CVEasy_API.Services
                 // add ToLower to negate case differences
                 listThemes = listThemes.Where(x => x.themeName.ToLower().Contains(request.themeName.ToLower()));
             }
-            
+
 
             if (!string.IsNullOrEmpty(request.createdByName))
             {
@@ -107,7 +124,7 @@ namespace CVEasy_API.Services
                     .AsQueryable();
 
                 // now use those UserIDs to filter in the themes
-                listThemes = listThemes.Where(x => listUserIDs.Contains(x.createdBy_UserID));
+                listThemes = listThemes.Where(x => listUserIDs.Contains(x.createdByID));
             }
 
             // if all of the filters are used, the query should look like this when executed
@@ -132,16 +149,7 @@ namespace CVEasy_API.Services
                 // this is to take the amount each page has
                 // i,e: each page has 10 => get 10
                 .Take(request.pageSize)
-                .Select(x => new GetThemeResponse
-                {
-                    themeID = x.themeID,
-                    createdByID = x.createdBy_UserID,
-                    themeName = x.themeName,
-                    themeDescr = x.themeDescr,
-                    themeFile = x.themeFile,
-                    deletedDate = x.deletedDate,
-                    version = x.version
-                }).ToList();
+                .ToList();
 
             // finally, we just need to convert the result to the necessary response type
             var response = new GetThemePaging
