@@ -3,9 +3,8 @@ namespace CVEasy_API.DTOs
     public class GetAllThemesRequest
     {
         // these are your search parameters
-        public string createdByName { get; set; }
-        public string themeName { get; set; }
-        public List<int> tagIDs { get; set; }
+        public string? createdByName { get; set; }
+        public string? themeName { get; set; }
 
         // these are for paging
         // pageIndex is for the current page the user is on
