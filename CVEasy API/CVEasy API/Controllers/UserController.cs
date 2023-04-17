@@ -30,16 +30,27 @@ namespace CVEasy_API.Controllers
             var stringToken = _authentication.GenerateJwtToken(user);
 
             return Ok(
-                $"Login request was successful. For bug-checking reasons, we'll display the email now. {user.Email}, token = {stringToken}");
+                $"Login request was successful. For bug-checking reasons, we'll display the email now. {user.Email}, userID = {user.UserId} & token = {stringToken}");
         }
 
         [HttpPost("Register")]
         public IActionResult Register([FromForm] UserRegistrationRequest registrationRequest)
         {
-            _authentication.RegisterUser(registrationRequest);
+            try
+            {
+                _authentication.RegisterUser(registrationRequest);
 
-
-            return Ok($"Test message");
+                return Ok(new
+                    { code = 201, message = $"User successfully registered. Welcome {registrationRequest.Username}!" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    code = 400,
+                    message = "Registration failed. Either you didn't input something, or did something wrong."
+                });
+            }
         }
 
         // PUT: api/User/5
