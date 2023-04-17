@@ -26,6 +26,7 @@ namespace CVEasy_API.Controllers
         // }
         
         // PATCH: api/RemoveComment
+        [Helpers.Authorize]
         [HttpPatch("RemoveComment")]
         public IActionResult RemoveComment([FromForm] CommentRemoveRequest removeRequest)
         {
@@ -35,6 +36,7 @@ namespace CVEasy_API.Controllers
         }
         
         // POST: api/PostComment
+        [Helpers.Authorize]
         [HttpPost("PostComment")]
         public IActionResult PostComment([FromForm] CommentRequest commentRequest)
         {
