@@ -19,7 +19,6 @@ namespace CVEasy_API.Controllers
         // GET: api/Theme
 
         // // GET: api/Theme/5
-        [Helpers.Authorize]
         [HttpGet("{themeId:int}", Name = "GetTemplate")]
         public OkObjectResult GetTheme(int themeId)
         {
@@ -42,6 +41,7 @@ namespace CVEasy_API.Controllers
             return Ok(new { code = 200, message = "Data received for themes.", data = dataResult });
         }
 
+        [Helpers.Authorize]
         [HttpPost("Upload Template")]
         public IActionResult Upload([FromForm] UploadRequest texFile)
         {
