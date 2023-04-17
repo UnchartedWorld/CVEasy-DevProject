@@ -11,6 +11,14 @@ public static class FileUpload
             Directory.CreateDirectory("Templates");
         }
 
+        var allowedExtensions = new[] { ".tex" };
+        var submittedFileExtension = Path.GetExtension(submitFile.FileName).ToLowerInvariant();
+
+        if (!allowedExtensions.Contains(submittedFileExtension))
+        {
+            throw new Exception("File extension isn't valid. Please consider what you did.");
+        }
+
         var fileName = Guid.NewGuid();
 
         var path = "Templates/" + fileName + ".tex";
