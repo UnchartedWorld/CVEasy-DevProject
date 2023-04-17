@@ -9,11 +9,13 @@ namespace CVEasy_API.Services
     public class ThemeService : IThemes
     {
         private DataContext _context;
+        private IHttpContextAccessor _httpContextAccessor;
 
         // init context in ThemeService's constructor
-        public ThemeService(DataContext context)
+        public ThemeService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public void UploadTheme(UploadRequest uploadRequest)
@@ -25,6 +27,7 @@ namespace CVEasy_API.Services
                 themeName = uploadRequest.ThemeTitle,
                 themeDescr = uploadRequest.ThemeDescr,
                 themeFile = upload,
+                deletedDate = null,
                 version = uploadRequest.ThemeVersion
             };
             _context.TableThemes.Add(newUpload);
@@ -52,6 +55,33 @@ namespace CVEasy_API.Services
             return response;
         }
 
+        public void RemoveTheme(int themeId)
+        {
+            AccountLogin userLogin = (AccountLogin)_httpContextAccessor.HttpContext.Items["UserLogin"];
+            
+            var themeToRemove = _context.TableThemes.FirstOrDefault(x => x.themeID == themeId);
+
+            if (themeToRemove?.deletedDate != null)
+            {
+                throw new Exception("Theme is already deleted.");
+            }
+
+            if (themeToRemove == null)
+            {
+                throw new Exception("Theme doesn't exist.");
+            }
+
+            if (themeToRemove.createdBy_UserID != userLogin?.Id)
+            {
+                throw new Exception("You're not the original creator, not allowed.");
+            }
+
+            themeToRemove.deletedDate = DateTime.UtcNow;
+
+            _context.TableThemes.Update(themeToRemove);
+            _context.SaveChanges();
+        }
+
         public GetThemePaging GetAllThemes(GetAllThemesRequest request)
         {
             // first, get list of Themes that haven't been deleted yet
@@ -65,13 +95,7 @@ namespace CVEasy_API.Services
                 // add ToLower to negate case differences
                 listThemes = listThemes.Where(x => x.themeName.ToLower().Contains(request.themeName.ToLower()));
             }
-
-            if (request.tagIDs.Any())
-            {
-                // using contains to get the themes with the ID specified in the search
-                // current db structure means 1 theme only has 1 ID
-                listThemes = listThemes.Where(x => request.tagIDs.Contains(x.tagID));
-            }
+            
 
             if (!string.IsNullOrEmpty(request.createdByName))
             {
