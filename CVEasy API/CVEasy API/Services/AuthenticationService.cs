@@ -59,6 +59,16 @@ public class AuthenticationService : IAuthentication
         };
         _dataContext.TableUser.Add(newUser);
         _dataContext.SaveChanges();
+
+        var newUserRole = new TableUserRole
+        {
+            userRole = "User",
+            userID = newUser.userID
+        };
+
+        _dataContext.TableUserRole.Add(newUserRole);
+        _dataContext.SaveChanges();
+
     }
     
     public string GenerateJwtToken(UserListResponse user)
