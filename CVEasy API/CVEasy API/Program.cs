@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using CVEasy_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,8 +52,37 @@ var key = Encoding.ASCII.GetBytes("YjjYgwP4JxbAbFHBCpPp");
                 ClockSkew = TimeSpan.Zero
             };
         });
-
 }
+
+// Adds authorization with Swagger. Uses https://code-maze.com/swagger-authorization-aspnet-core/
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "CVEasy API", Version = "v1" } );
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Enter JWT Token. You got this from using the Login API Endpoint (if not, go do so)",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -62,7 +92,7 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CVEasy API v1"));
-    
+
     // Custom JWT authentication middleware
     app.UseMiddleware<JwtMiddleware>();
 }
