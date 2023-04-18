@@ -10,4 +10,6 @@ public interface IComments
     public void SubmitComment(CommentRequest commentRequest);
 
     public void RemoveComment(CommentRemoveRequest removeRequest);
+
+    public void UpdateComment(CommentRequest commentRequest);
 }

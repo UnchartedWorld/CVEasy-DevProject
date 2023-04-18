@@ -11,5 +11,6 @@ namespace CVEasy_API.Interfaces
         public void UploadTheme(UploadRequest uploadRequest);
         public GetThemeResponse GetTheme(int themeId);
         public void RemoveTheme(int themeId);
+        public void UpdateTheme(ThemeRequest themeRequest);
     }
 }
