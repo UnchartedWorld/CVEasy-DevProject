@@ -86,6 +86,30 @@ namespace CVEasy_API.Services
             _context.SaveChanges();
         }
 
+        public void UpdateTheme(ThemeRequest themeRequest)
+        {
+            AccountLogin userLogin = (AccountLogin)_httpContextAccessor.HttpContext.Items["UserLogin"];
+
+            var themeToUpdate = _context.TableThemes.FirstOrDefault(x => x.themeID == themeRequest.ThemeId);
+
+            if (themeToUpdate == null)
+            {
+                throw new Exception("Theme doesn't exist.");
+            }
+
+            if (themeToUpdate.createdBy_UserID != userLogin?.Id)
+            {
+                throw new Exception("You're not the original creator, not allowed.");
+            }
+
+            themeToUpdate.themeDescr = themeRequest.ThemeDescr;
+            themeToUpdate.themeName = themeRequest.ThemeName;
+            themeToUpdate.version = themeRequest.Version;
+            
+            _context.TableThemes.Update(themeToUpdate);
+            _context.SaveChanges();
+        }
+
         public GetThemePaging GetAllThemes(GetAllThemesRequest request)
         {
             // first, get list of Themes that haven't been deleted yet
