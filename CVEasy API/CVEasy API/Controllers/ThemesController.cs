@@ -15,9 +15,6 @@ namespace CVEasy_API.Controllers
             _themes = themes;
         }
 
-        // GET: api/Theme
-
-        // // GET: api/Theme/5
         [HttpGet("{themeId:int}", Name = "GetTemplate")]
         public OkObjectResult GetTheme(int themeId)
         {
@@ -26,7 +23,24 @@ namespace CVEasy_API.Controllers
             return Ok(new { code = 200, message = "Theme found, returning data: ", data = template });
         }
 
-        [HttpPost("GetAllThemes")]
+        [Helpers.Authorize]
+        [HttpPatch("UpdateTemplate")]
+        public IActionResult UpdateTemplate([FromForm] ThemeRequest themeRequest)
+        {
+            try
+            {
+                _themes.UpdateTheme(themeRequest);
+
+                return Ok(new { code = 200, message = "Template successfully updated" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                    { code = 400, message = "Template failed to update.", exception = e.Message });
+            }
+        }
+
+        [HttpPost("GetAllTemplates")]
         public IActionResult GetThemes([FromForm] GetAllThemesRequest allThemesRequest)
         {
             var dataResult = _themes.GetAllThemes(allThemesRequest);
