@@ -29,8 +29,26 @@ namespace CVEasy_API.Controllers
 
             var stringToken = _authentication.GenerateJwtToken(user);
 
-            return Ok(
-                $"Login request was successful. For bug-checking reasons, we'll display the email now. {user.Email}, userID = {user.UserId} & token = {stringToken}");
+            return Ok(new
+            {
+                code = 200, userID = user.UserId, token = stringToken
+            });
+        }
+
+        [Helpers.Authorize]
+        [HttpPost("PostUserDetails")]
+        public IActionResult UpdateUserDetails([FromForm] UserDetailsRequest detailsRequest)
+        {
+            try
+            {
+                _user.UploadUserDetails(detailsRequest);
+                return Ok(new { code = 201, message = "Details successfully submitted." });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                    { code = 400, message = "Either the detail entry already exists or the input was wrong." });
+            }
         }
 
         [HttpPost("Register")]
