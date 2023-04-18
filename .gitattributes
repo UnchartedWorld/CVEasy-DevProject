@@ -1,2 +1,3 @@
-texlive/* linguist-documentation
-promise/*js linguist-documentation
+CVEasy Front-End/cveasy-frontend/public/texlive/* linguist-documentation
+CVEasy Front-End/cveasy-frontend/public/promisejs/* linguist-documentation
+CVEasy Front-End/cveasy-frontend/public/texlive.js/* -linguist-documentation
