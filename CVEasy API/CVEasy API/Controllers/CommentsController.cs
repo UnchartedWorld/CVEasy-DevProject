@@ -1,4 +1,6 @@
+using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
+using CVEasy_API.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVEasy_API.Controllers
@@ -7,44 +9,58 @@ namespace CVEasy_API.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-
         private IComments _comments;
 
         public CommentsController(IComments comments)
         {
             _comments = comments;
         }
-        // GET: api/Comments
-        [HttpGet]
-        public IActionResult Get()
+
+        // PATCH: api/RemoveComment
+        [Helpers.Authorize]
+        [HttpPatch("RemoveComment")]
+        public IActionResult RemoveComment([FromForm] CommentRemoveRequest removeRequest)
         {
-            var dataResult = _comments.GetComments();
-            return Ok(new { code = 200, message = "Data retrieved, showing comments", data = dataResult });
+            _comments.RemoveComment(removeRequest);
+
+            return Ok("Comment has been deleted, thank you");
         }
 
-        // // GET: api/Comments/5
-        // [HttpGet("{id}", Name = "Get")]
-        // public string Get(int id)
-        // {
-        //     return "value";
-        // }
-
-        // POST: api/Comments
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [Helpers.Authorize]
+        [HttpPatch("UpdateComment")]
+        public IActionResult UpdateComment([FromForm] CommentRequest commentRequest)
         {
+            try
+            {
+                _comments.UpdateComment(commentRequest);
+
+                return Ok(new { code = 200, message = "Comment successfully updated" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                    { code = 400, message = "Comment failed to update." });
+            }
         }
 
-        // PUT: api/Comments/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // POST: api/PostComment
+        [Helpers.Authorize]
+        [HttpPost("PostComment")]
+        public IActionResult PostComment([FromForm] CommentRequest commentRequest)
         {
+            _comments.SubmitComment(commentRequest);
+
+            return Ok("Nice, your comment is as such: " + commentRequest.Comment + ", and is from the UserID: " +
+                      commentRequest.UserID);
         }
 
-        // DELETE: api/Comments/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST: api/GetAllComments
+        [HttpPost("GetAllComments")]
+        public IActionResult GetComments([FromForm] GetAllCommentsRequest commentsRequest)
         {
+            var dataResult = _comments.GetAllComments(commentsRequest);
+            return Ok(new { code = 200, message = "Data received for comments.", data = dataResult });
         }
+        
     }
 }

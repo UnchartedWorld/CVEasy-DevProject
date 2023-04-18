@@ -1,14 +1,17 @@
 import {createTheme} from "@mui/material/styles";
+import { brandPrimary, brandSecondary } from "CustomColors";
 
 
 const themes = createTheme({
     palette: {
-        type: 'dark',
         primary: {
-            main: '#77a978',
+            main: brandPrimary[400],
         },
         secondary: {
-            main: '#b70747',
+            main: brandSecondary[600],
+        },
+        primaryLight: {
+            main: brandPrimary[400]
         },
     },
 });

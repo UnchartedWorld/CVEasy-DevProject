@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using CVEasy_API.DTOs;
 using CVEasy_API.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVEasy_API.Controllers
@@ -18,38 +14,71 @@ namespace CVEasy_API.Controllers
         {
             _themes = themes;
         }
-        
-        // GET: api/Theme
-        [HttpGet]
-        public IActionResult Get()
+
+        [HttpGet("{themeId:int}", Name = "GetTemplate")]
+        public OkObjectResult GetTheme(int themeId)
         {
-            var dataResult = _themes.GetThemes();
+            var template = _themes.GetTheme(themeId);
+            if (template == null) throw new KeyNotFoundException("Theme not found");
+            return Ok(new { code = 200, message = "Theme found, returning data: ", data = template });
+        }
+
+        [Helpers.Authorize]
+        [HttpPatch("UpdateTemplate")]
+        public IActionResult UpdateTemplate([FromForm] ThemeRequest themeRequest)
+        {
+            try
+            {
+                _themes.UpdateTheme(themeRequest);
+
+                return Ok(new { code = 200, message = "Template successfully updated" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                    { code = 400, message = "Template failed to update.", exception = e.Message });
+            }
+        }
+
+        [HttpPost("GetAllTemplates")]
+        public IActionResult GetThemes([FromForm] GetAllThemesRequest allThemesRequest)
+        {
+            var dataResult = _themes.GetAllThemes(allThemesRequest);
             return Ok(new { code = 200, message = "Data received for themes.", data = dataResult });
         }
 
-        // // GET: api/Theme/5
-        // [HttpGet("{id}", Name = "Get")]
-        // public string Get(int id)
-        // {
-        //     return "value";
-        // }
-
-        // POST: api/Theme
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [Helpers.Authorize]
+        [HttpPost("Upload Template")]
+        public IActionResult Upload([FromForm] UploadRequest texFile)
         {
-        }
+            try
+            {
+                _themes.UploadTheme(texFile);
 
-        // PUT: api/Theme/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+                return Ok(new { code = 201, message = "File has been uploaded" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                    { code = 400, message = "Theme not successfully uploaded." });
+            }
         }
 
         // DELETE: api/Theme/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Helpers.Authorize]
+        [HttpDelete("{themeId:int}", Name = "RemoveTemplate")]
+        public IActionResult Delete(int themeId)
         {
+            try
+            {
+                _themes.RemoveTheme(themeId);
+                return Ok(new { code = 200, message = "Template successfully removed." });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                    { code = 400, message = "Template either not found or is already deleted" });
+            }
         }
     }
 }

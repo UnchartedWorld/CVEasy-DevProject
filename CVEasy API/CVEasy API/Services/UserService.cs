@@ -1,5 +1,6 @@
 using CVEasy_API.Data;
 using CVEasy_API.DTOs;
+using CVEasy_API.Helpers;
 using CVEasy_API.Model;
 
 namespace CVEasy_API.Services;
@@ -10,11 +11,14 @@ public class UserService : IUser // This can be re-used to get all users in othe
 {
     private DataContext _dataContext; // Initiates a new data context each time it's called. 
     private IAuthentication _authentication;
+    private IHttpContextAccessor _httpContextAccessor;
 
-    public UserService(DataContext data, IAuthentication authentication) // Constructor
+    public UserService(DataContext data, IAuthentication authentication,
+        IHttpContextAccessor httpContextAccessor) // Constructor
     {
         _dataContext = data;
         _authentication = authentication;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -48,6 +52,40 @@ public class UserService : IUser // This can be re-used to get all users in othe
             user.email
         );
 
+        // var token = _authentication.GenerateJwtToken(userListResponse);
+
         return userListResponse;
+    }
+
+    public void UploadUserDetails(UserDetailsRequest detailsRequest)
+    {
+        var newUserDetails = new TableUserDetails
+        {
+            firstName = detailsRequest.firstName,
+            lastName = detailsRequest.lastName,
+            middleNames = detailsRequest.middleNames,
+            phoneNum = detailsRequest.phoneNum,
+            userID = detailsRequest.UserID
+        };
+        _dataContext.TableUserDetails.Add(newUserDetails);
+        _dataContext.SaveChanges();
+    }
+
+    public void UpdateUserDetails(UserDetailsRequest detailsRequest)
+    {
+        AccountLogin userLogin = (AccountLogin)_httpContextAccessor.HttpContext.Items["UserLogin"];
+
+        var userDetailsToUpdate = _dataContext.TableUserDetails.FirstOrDefault(x => x.userID == detailsRequest.UserID);
+
+        if (userDetailsToUpdate == null)
+        {
+            throw new Exception("Details cannot be updated, there isn't details TO update.");
+        }
+
+        if (userDetailsToUpdate.userID != userLogin?.Id)
+        {
+            throw new Exception("You don't own this account. How did you even pull this one off?");
+        }
+
     }
 }

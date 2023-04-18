@@ -19,7 +19,7 @@ public class DataContext : DbContext
     
     public DbSet<TableUser> TableUser { get; set; }
     public DbSet<TableUserDetails> TableUserDetails { get; set; }
-    public DbSet<TableUserRole> TableUserRoles { get; set; }
+    public DbSet<TableUserRole> TableUserRole { get; set; }
     public DbSet<TableThemes> TableThemes { get; set; }
     public DbSet<TableComments> TableComments { get; set; }
     public DbSet<TableTags> TableTags { get; set; }
