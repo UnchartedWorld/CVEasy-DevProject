@@ -12,13 +12,14 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
 import { AccountCircle } from "@mui/icons-material";
-import { FormControlLabel, FormGroup, Switch } from "@mui/material";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
 
 const pages = ["Home", "Templates", "About"];
 const settings = ["Account", "Settings", "Logout"];
 
 function NavbarComponent() {
-  const [auth, setAuth] = React.useState(true);
+  const [auth, setAuth] = React.useState(false);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -26,9 +27,24 @@ function NavbarComponent() {
     null
   );
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
+  useEffect(() => {
+    const token = Cookies.get("token");
+    const userID = Cookies.get("userID");
+    if (
+      (token === "" || token === null || token === undefined) &&
+      (userID === "" || userID === null || userID === undefined)
+    ) {
+      setAuth(false);
+    } else {
+      setAuth(true);
+    }
+  }, []);
+
+  //if ((token == "" || token == null) && (userID == "" || userID == null)) {
+  //  setAuth(false);
+  //} else {
+  //  setAuth(true);
+  //}
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -49,18 +65,6 @@ function NavbarComponent() {
     <header>
       <nav>
         <Box sx={{ flexGrow: 1 }}>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={auth}
-                  onChange={handleChange}
-                  aria-label="login switch"
-                />
-              }
-              label={auth ? "Logout" : "Login"}
-            />
-          </FormGroup>
           <AppBar position="static">
             <Container maxWidth="xl">
               <Toolbar disableGutters>
