@@ -14,7 +14,7 @@ import {
   CleaningServices,
   Download,
 } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 export var pdfURL: string | URL | undefined;
@@ -23,6 +23,10 @@ export default function LaTeXAce() {
   const [input, setInput] = useState("");
   const { state } = useLocation();
   const passedCode = state.texCode;
+
+  useEffect(() => {
+    setInput(passedCode)
+  }, []);
 
   function onChange(newVal: any) {
     setInput(newVal);
@@ -97,7 +101,7 @@ export default function LaTeXAce() {
       <AceEditor
         name="editor"
         mode="latex"
-        value={passedCode}
+        value={input}
         onChange={onChange}
         theme="monokai"
         height="100dvh"
