@@ -19,6 +19,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "fs-extra": "^11.1.0",
+    "http-proxy-middleware": "^2.0.6",
     "js-cookie": "^3.0.1",
     "katex": "^0.16.4",
     "latex.js": "^0.12.4",
@@ -38,7 +39,6 @@
     "typescript": "^4.9.4",
     "web-vitals": "^2.1.4"
   },
-  "proxy": "https://localhost:7237",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
