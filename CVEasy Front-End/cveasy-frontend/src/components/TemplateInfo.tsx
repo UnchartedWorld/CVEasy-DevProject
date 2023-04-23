@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -18,8 +18,9 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function TemplateInfo() {
+export default function TemplateInfo({data}: any) {
   const [open, setOpen] = React.useState(false);
+  const navigation = useNavigate();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -29,9 +30,24 @@ export default function TemplateInfo() {
     setOpen(false);
   };
 
+  function handleLaTeXPass() {
+    const code: string = data.themeFile;
+    navigation('/ResumeCreation', {state: {texCode: code}}); 
+  }
+
+
+console.log("Passed data is = " + JSON.stringify(data))
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Typography
+            variant={"h3"}
+            component={"h1"}
+            fontWeight={"bold"}>
+            Theme Name:
+          </Typography>
+        </Grid>
         <Grid item xs={12}>
           <Typography
             variant={"h3"}
@@ -40,12 +56,47 @@ export default function TemplateInfo() {
             color={"inherit"}
             padding={"15px auto"}
           >
-            Theme title
+            {data.themeName}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            variant={"h4"}
+            component={"h4"}
+            color={"inherit"}
+            fontWeight={"bold"}>
+              Creator: 
+            </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            variant={"h4"}
+            component={"h4"}
+            color={"inherit"}>
+              {data.createdByUsername}
+            </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            component={"h5"}
+            variant={"h5"}
+            padding={"15px auto"}
+            fontWeight={"bold"}>
+              Description:
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            component={"p"}
+            align={"left"}
+            color={"inherit"}
+            padding={"15px auto"}
+          >
+            {data.themeDescr}
           </Typography>
         </Grid>
         <Grid item xs={8} sm={7}>
-          {/* I need to make sure this re-routes to the right page and sends the theme ID, else we can't copy the LaTeX code */}
-          <Button variant="contained" component={Link} to="/ResumeCreation">
+          <Button variant="contained" onClick={handleLaTeXPass}>
             Use Template
           </Button>
         </Grid>
@@ -61,22 +112,10 @@ export default function TemplateInfo() {
             <DialogTitle>{"View source code"}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-slide-description">
-                \document[a4paper, test]
-                other stuff
+                {data.themeFile}
               </DialogContentText>
             </DialogContent>
           </Dialog>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Typography
-            component={"p"}
-            align={"left"}
-            color={"inherit"}
-            padding={"15px auto"}
-          >
-            Theme description.
-          </Typography>
         </Grid>
       </Grid>
     </Box>
