@@ -14,7 +14,6 @@ export default function TemplateView() {
   useEffect(() => {
     axios.get(`api/Themes/${themeID}`).then((response) => {
       setThemeData(response.data.data);
-      console.log(JSON.stringify(themeData));
     });
   }, []);
 
@@ -27,7 +26,7 @@ export default function TemplateView() {
           <TemplateInfo data={themeData} />
         </Grid>
         <Grid item xs={12} sx={{ paddingTop: "10rem" }}>
-          <CommentSection />
+          <CommentSection data={themeData} />
         </Grid>
       </Container>
     </Grid>
