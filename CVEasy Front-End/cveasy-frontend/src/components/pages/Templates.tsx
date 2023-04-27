@@ -26,31 +26,24 @@ export default function Templates() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(9);
   const [numOfTemplates, setNumOfTemplates] = useState<number>(0);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   async function getTemplates() {
     try {
-      const templateFormData = new FormData();
-      //templateFormData.append("createdByName", searchQuery);
-      templateFormData.append("themeName", searchQuery);
-      templateFormData.append("pageIndex", currentPage.toString());
-      templateFormData.append("pageSize", pageSize.toString());
+      const templateSearchParams = new URLSearchParams(); 
+      templateSearchParams.append("templateName", searchQuery);
+      templateSearchParams.append("pageIndex", currentPage.toString());
+      templateSearchParams.append("pageSize", pageSize.toString());
 
-      const response = await axios.post(
-        "api/Themes/GetAllTemplates",
-        templateFormData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      setTemplates(response.data.data.themes);
-      setNumOfPages(response.data.totalRecords / pageSize);
-      setNumOfTemplates(response.data.data.totalRecords);
-      console.log(response.data.data);
+      const response = axios.get("api/Themes/GetAllTemplates/?" + templateSearchParams);
+
+      setTemplates((await response).data.data.themes);
+      setNumOfPages((await response).data.totalRecords / pageSize);
+      setNumOfTemplates((await response).data.data.totalRecords);
+      console.log((await response).data.data);
     } catch (error) {
       console.log(error);
     }
-  }
-
-  function handleCardClick(props: any) {
   }
 
   useEffect(() => {
@@ -99,18 +92,26 @@ export default function Templates() {
           variant={"h4"}
           sx={{ fontSize: "2.5rem" }}
           paddingLeft={"24px"}
-          paddingTop={"32px"}>
-          Sorry, it appears nothing was returned. Try searching for something else, or check your connection.
+          paddingTop={"32px"}
+        >
+          Sorry, it appears nothing was returned. Try searching for something
+          else, or check your connection.
         </Typography>
       )}
       <Grid container component={"main"} spacing={2}>
         {templates.map((themeData: any, i: any) => (
-          <Grid xs={12} sm={6} md={4} component={"article"} key={themeData.themeID}>
+          <Grid
+            xs={12}
+            sm={6}
+            md={4}
+            component={"article"}
+            key={themeData.themeID}
+          >
             <ThemeCard
-              themeId={themeData.themeID}  
-              cardImg={"https://loremflickr.com/640/480/shiba"}
+              themeId={themeData.themeID}
+              cardImg={"https://loremflickr.com/640/480/shibainu"}
               cardTitle={themeData.themeName}
-              themeCreator={themeData.createdByUsername} 
+              themeCreator={themeData.createdByUsername}
               cardDescription={themeData.themeDescr}
             />
           </Grid>
@@ -125,9 +126,13 @@ export default function Templates() {
           paddingTop: "12px",
         }}
       >
-        {numOfPages > 1 &&
-                <Pagination count={numOfPages} page={currentPage} variant="outlined" />
-        }
+        {numOfPages > 1 && (
+          <Pagination
+            count={numOfPages}
+            page={currentPage}
+            variant="outlined"
+          />
+        )}
       </Box>
     </Box>
   );
