@@ -15,6 +15,7 @@ import { useState } from "react";
 import Alert from "@mui/material/Alert";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 function Copyright(props: any) {
   return (
@@ -58,19 +59,33 @@ export default function LoginPage() {
    */
   function isEnteredEmailValid(email: string) {
     const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
-    return emailRegex.test(email)
+    return emailRegex.test(email);
+  }
+
+  function isEnteredPasswordValid(password: string) {
+    if (password.length < 8 || password === "") {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputEmail = event.target.value;
     setEmail(inputEmail);
-    setDisabled(!isEnteredEmailValid(inputEmail) || password === '' || password.length < 8);
+    setDisabled(
+      !isEnteredEmailValid(inputEmail) || password === "" || password.length < 8
+    );
   }
 
   function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputPassword = event.target.value;
     setPassword(inputPassword);
-    setDisabled(!isEnteredEmailValid(email) || event.target.value === '' || event.target.value.length < 8)
+    setDisabled(
+      !isEnteredEmailValid(email) ||
+        event.target.value === "" ||
+        event.target.value.length < 8
+    );
   }
 
   async function handleSubmit(event: any) {
@@ -80,7 +95,7 @@ export default function LoginPage() {
       const loginFormData = new FormData();
       loginFormData.append("Email", email);
       loginFormData.append("Password", password);
-      
+
       setLoading(true);
       const response: AxiosResponse<LoginResponse> = await axios.post(
         "api/User/Login",
@@ -92,16 +107,22 @@ export default function LoginPage() {
         const userID = response.data.userID;
         const expirationTimeInHours = 47;
         const trueExpirationTime = expirationTimeInHours / 24;
-  
-        Cookies.set('token', token, { expires: trueExpirationTime, secure: true, sameSite: 'strict'})
-        Cookies.set('userID', userID, { expires: trueExpirationTime, secure: true, sameSite: 'strict'})
+
+        Cookies.set("token", token, {
+          expires: trueExpirationTime,
+          secure: true,
+          sameSite: "strict",
+        });
+        Cookies.set("userID", userID, {
+          expires: trueExpirationTime,
+          secure: true,
+          sameSite: "strict",
+        });
         setDisabled(true);
 
-        navigateTo('/Templates');
-        window.location.replace('/Templates');
-
+        navigateTo("/Templates");
+        window.location.replace("/Templates");
       }
-      
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (
@@ -110,9 +131,11 @@ export default function LoginPage() {
           error.response.data &&
           error.response.data.error
         ) {
-          const errorMessage = error.response?.data.message || "An unknown message I didn't account for occurred."
+          const errorMessage =
+            error.response?.data.message ||
+            "An unknown error I didn't account for occurred.";
           setError(errorMessage);
-          console.log(error.response.data.error);
+          setLoading(false);
         }
       }
     }
@@ -156,6 +179,7 @@ export default function LoginPage() {
               autoComplete="email"
               autoFocus
               onChange={handleEmailChange}
+              disabled={loading}
               error={!isEnteredEmailValid(email)}
             />
             <TextField
@@ -167,7 +191,9 @@ export default function LoginPage() {
               type="password"
               id="password"
               autoComplete="current-password"
+              disabled={loading}
               onChange={handlePasswordChange}
+              error={!isEnteredPasswordValid(password)}
               InputProps={{
                 inputProps: {
                   minLength: 8,
@@ -179,7 +205,7 @@ export default function LoginPage() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={disabled}
+              disabled={disabled || loading}
             >
               Sign In
             </Button>
@@ -197,6 +223,17 @@ export default function LoginPage() {
           <Alert severity="error" onClose={clearErrorMessage}>
             {error}
           </Alert>
+        )}
+        {loading && (
+          <Backdrop
+            sx={{
+              color: "#fff",
+              zIndex: (theme: any) => theme.zIndex.drawer + 1,
+            }}
+            open={loading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
         )}
       </Container>
     </ThemeProvider>
