@@ -34,7 +34,8 @@ const Transition = React.forwardRef(function Transition(
 
 export default function TemplateInfo({ data }: any) {
   const [open, setOpen] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
@@ -54,7 +55,7 @@ export default function TemplateInfo({ data }: any) {
     try {
       const updateFormData = new FormData();
       updateFormData.append("UserID", userID);
-      updateFormData.append("ThemeID", data.themeID)
+      updateFormData.append("ThemeID", data.themeID);
 
       if (title !== null || title !== "") {
         updateFormData.append("ThemeName", title);
@@ -78,8 +79,41 @@ export default function TemplateInfo({ data }: any) {
         headers: headers,
       });
       handleModalClose();
-      window.location.reload();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (
+          error &&
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          const errorMessage =
+            error.response.data.message ||
+            "An unknown error I didn't account for occurred.";
+          setError(errorMessage);
+        }
+      }
+    }
+  }
 
+  async function handleTemplateDelete() {
+    try {
+      if (data.themeID !== null || data.themeID !== "") {
+        const headers: any = {};
+        if (userID) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const response = await axios.delete(`api/Themes/${data.themeID}`, {
+          headers: headers,
+        });
+
+        if (response.status === 200) {
+          handleDeleteModalClose();
+          navigation("/Templates");
+          window.location.replace("/Templates");
+        }
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (
@@ -120,6 +154,15 @@ export default function TemplateInfo({ data }: any) {
   function handleModalClickOpen() {
     handleMenuClose();
     setOpenModal(true);
+  }
+
+  function handleDeleteModalOpen() {
+    handleMenuClose();
+    setOpenDeleteModal(true);
+  }
+
+  function handleDeleteModalClose() {
+    setOpenDeleteModal(false);
   }
 
   function handleModalClose() {
@@ -180,14 +223,34 @@ export default function TemplateInfo({ data }: any) {
               onClose={handleMenuClose}
             >
               <MenuItem onClick={handleModalClickOpen}>Edit template</MenuItem>
+              <MenuItem onClick={handleDeleteModalOpen} sx={{ color: "red" }}>
+                Delete template
+              </MenuItem>
             </Menu>
           </Grid>
         )}
 
-        <Dialog open={openModal} onClose={handleModalClose}>
-          <DialogTitle>Edit Template. All fields are optional, so only update what you need to</DialogTitle>
-          <form onSubmit={handleTemplateUpdate}>
+        <Dialog open={openDeleteModal} onClose={handleDeleteModalClose}>
+          <DialogTitle>Are you sure?</DialogTitle>
           <DialogContent>
+            Once deleted, you <b>cannot</b> retrieve the template without admin
+            support. Please, ensure this is what you want.
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteModalClose}>Cancel</Button>
+            <Button onClick={handleTemplateDelete} variant="contained">
+              Delete template
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={openModal} onClose={handleModalClose}>
+          <DialogTitle>
+            Edit Template. All fields are optional, so only update what you need
+            to
+          </DialogTitle>
+          <form onSubmit={handleTemplateUpdate}>
+            <DialogContent>
               <Typography variant={"h4"} component={"h4"} fontWeight={"bold"}>
                 Enter Title:
               </Typography>
@@ -196,7 +259,7 @@ export default function TemplateInfo({ data }: any) {
                 label="Template Title"
                 value={title}
                 onChange={handleTitleChange}
-                sx={{ my: "16px !important"}}
+                sx={{ my: "16px !important" }}
               />
               <Typography variant={"h4"} component={"h4"} fontWeight={"bold"}>
                 Enter Description:
@@ -206,7 +269,7 @@ export default function TemplateInfo({ data }: any) {
                 label="Template Description"
                 value={description}
                 onChange={handleDescriptionChange}
-                sx={{ my: "16px !important"}}
+                sx={{ my: "16px !important" }}
               />
               <Typography variant={"h4"} component={"h4"} fontWeight={"bold"}>
                 Upload Template:
@@ -216,7 +279,7 @@ export default function TemplateInfo({ data }: any) {
                 color="secondary"
                 component="label"
                 aria-label="Button that allows you to upload TeX files."
-                sx={{ my: "16px !important"}}
+                sx={{ my: "16px !important" }}
               >
                 Upload TeX file
                 <input
@@ -234,19 +297,15 @@ export default function TemplateInfo({ data }: any) {
                 label="Template Version"
                 value={version}
                 onChange={handleVersionChange}
-                sx={{ my: "16px !important"}}
+                sx={{ my: "16px !important" }}
               />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleModalClose}>Cancel</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
-              Update Template
-            </Button>
-          </DialogActions>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleModalClose}>Cancel</Button>
+              <Button type="submit" variant="contained" color="primary">
+                Update Template
+              </Button>
+            </DialogActions>
           </form>
         </Dialog>
 
@@ -316,15 +375,12 @@ export default function TemplateInfo({ data }: any) {
             onClose={handleClose}
             fullWidth
             maxWidth={"xl"}
-
           >
             <DialogTitle>{"View source code"}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-slide-description">
                 <pre>
-                  <code>
-                  {data.themeFile}
-                  </code>
+                  <code>{data.themeFile}</code>
                 </pre>
               </DialogContentText>
             </DialogContent>
