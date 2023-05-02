@@ -6,10 +6,10 @@ namespace CVEasy_API.DTOs
         public int themeID { get; set; }
         public int createdByID { get; set; }
         public string createdByUsername { get; set; }
-        public string themeName { get; set; }
-        public string themeDescr { get; set; }
+        public string? themeName { get; set; }
+        public string? themeDescr { get; set; }
         public string themeFile { get; set; }
         public DateTime? deletedDate { get; set; }
-        public string version { get; set; }
+        public string? version { get; set; }
     }
 }

@@ -4,7 +4,7 @@ namespace CVEasy_API.DTOs
     {
         // these are your search parameters
         public string? createdByName { get; set; }
-        public string? themeName { get; set; }
+        public string? templateName { get; set; }
 
         // these are for paging
         // pageIndex is for the current page the user is on
