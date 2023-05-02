@@ -19,16 +19,25 @@ public class CommentsService : IComments
 
     public GetCommentPaging GetAllComments(GetAllCommentsRequest commentsRequest)
     {
-        var listComments = _dataContext.TableComments.AsQueryable();
+        var listComments = from c in _dataContext.TableComments
+            from u in _dataContext.TableUser.Where(x => c.userID == x.userID).DefaultIfEmpty()
+            from t in _dataContext.TableThemes.Where(x => u.userID == x.createdBy_UserID).DefaultIfEmpty()
+            select new GetCommentResponse
+            {
+                username = u.loginName,
+                userID = c.userID,
+                comment = c.comment,
+                commentID = c.commentID,
+                themeID = t.themeID
+            };
 
         var allComments = listComments.Skip(commentsRequest.commentIndex * commentsRequest.commentSize)
             .Take(commentsRequest.commentSize)
             .Select(x => new GetCommentResponse
             {
-                commentID = x.commentID,
                 themeID = x.themeID,
-                comment = x.comment
             }).ToList();
+
 
         var response = new GetCommentPaging
         {
@@ -57,7 +66,7 @@ public class CommentsService : IComments
     public void RemoveComment(CommentRemoveRequest commentRemoveRequest)
     {
         AccountLogin userLogin = (AccountLogin)_httpContextAccessor.HttpContext.Items["UserLogin"];
-        
+
         var commentByUser = _dataContext.TableComments.FirstOrDefault(x =>
             x.userID == commentRemoveRequest.UserID && x.themeID == commentRemoveRequest.ThemeID &&
             x.commentID == commentRemoveRequest.CommentId);
@@ -81,7 +90,7 @@ public class CommentsService : IComments
     public void UpdateComment(CommentRequest commentRequest)
     {
         AccountLogin userLogin = (AccountLogin)_httpContextAccessor.HttpContext.Items["UserLogin"];
-        
+
         var commentToUpdate = _dataContext.TableComments.FirstOrDefault(x =>
             x.userID == commentRequest.UserID && x.themeID == commentRequest.ThemeID &&
             x.commentID == commentRequest.CommentID);
@@ -100,6 +109,5 @@ public class CommentsService : IComments
 
         _dataContext.TableComments.Update(commentToUpdate);
         _dataContext.SaveChanges();
-
     }
 }
