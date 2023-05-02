@@ -6,7 +6,15 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-monokai";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/ext-searchbox";
-import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Grid,
+  IconButton,
+  Snackbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { brandPrimary } from "../CustomColors";
 import {
   ArrowCircleRight,
@@ -14,22 +22,60 @@ import {
   CleaningServices,
   Download,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 export var pdfURL: string | URL | undefined;
 
 export default function LaTeXAce() {
   const [input, setInput] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+  const [snackMessage, setSnackMessage] = useState<string>("");
+  const aceRef = useRef<AceEditor | null>(null);
   const { state } = useLocation();
   const passedCode = state.texCode;
 
   useEffect(() => {
-    setInput(passedCode)
+    setInput(passedCode);
   }, []);
+
+  async function copyTextToClip() {
+    const aceEditor = aceRef.current?.editor;
+    const aceCode = aceEditor?.getValue();
+
+    if (aceCode) {
+      try {
+        setSnackMessage("Code copied successfully!");
+        setOpenSnackbar(true);
+        await navigator.clipboard.writeText(aceCode);
+      } catch (error) {
+        setSnackMessage("Couldn't copy code to clipboard for some reason.");
+        setOpenSnackbar(true);
+      }
+    }
+  }
+
+  /* https://thewebdev.info/2021/11/20/how-to-download-a-string-as-txt-file-in-react/ */
+
+  function downloadCode() {
+    const element = document.createElement("a");
+    const file = new Blob([input], {type: "text/plain"})
+    element.href = URL.createObjectURL(file);
+    element.download = "template.tex";
+    document.body.appendChild(element);
+    element.click()
+  }
+
+  function handleSnackClose() {
+    setOpenSnackbar(false);
+  }
 
   function onChange(newVal: any) {
     setInput(newVal);
+  }
+
+  function clearCode() {
+    setInput("");
   }
 
   const compileTeX = () => {
@@ -67,21 +113,24 @@ export default function LaTeXAce() {
         </Grid>
         <Grid item xs={1}>
           <Tooltip title="Download LaTeX">
-            <IconButton aria-label="Icon that lets you download the LaTeX code used.">
+            <IconButton onClick={downloadCode} aria-label="Icon that lets you download the LaTeX code used.">
               <Download />
             </IconButton>
           </Tooltip>
         </Grid>
         <Grid item xs={1}>
           <Tooltip title="Copy to Clipboard">
-            <IconButton aria-label="Icon that lets you copy your LaTeX code to your clipboard">
+            <IconButton
+              onClick={copyTextToClip}
+              aria-label="Icon that lets you copy your LaTeX code to your clipboard"
+            >
               <Assignment />
             </IconButton>
           </Tooltip>
         </Grid>
         <Grid item xs={1}>
           <Tooltip title="Clear code. THIS WILL REMOVE WHAT YOU WROTE HERE">
-            <IconButton aria-label="Icon that clears the editor. Be careful.">
+            <IconButton onClick={clearCode} aria-label="Icon that clears the editor. Be careful.">
               <CleaningServices />
             </IconButton>
           </Tooltip>
@@ -99,6 +148,7 @@ export default function LaTeXAce() {
       </Grid>
 
       <AceEditor
+        ref={aceRef}
         name="editor"
         mode="latex"
         value={input}
@@ -107,10 +157,28 @@ export default function LaTeXAce() {
         height="100dvh"
         width="100vw"
         fontSize="1.1rem"
+        wrapEnabled
         enableBasicAutocompletion={true}
         enableLiveAutocompletion={true}
         enableSnippets={true}
       />
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleSnackClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          severity={snackMessage.startsWith("Failed: ") ? "error" : "success"}
+          onClose={handleSnackClose}
+        >
+          <AlertTitle>
+            {snackMessage.startsWith("Failed") ? "Error" : "Success"}
+          </AlertTitle>
+          {snackMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
