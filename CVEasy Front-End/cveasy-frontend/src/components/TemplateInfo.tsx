@@ -355,6 +355,26 @@ export default function TemplateInfo({ data }: any) {
             {data.themeDescr}
           </Typography>
         </Grid>
+        <Grid item xs={12}>
+          <Typography
+            component={"h6"}
+            variant={"h6"}
+            padding={"15px auto"}
+            fontWeight={"bold"}
+          >
+            Version:
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            component={"p"}
+            align={"left"}
+            color={"inherit"}
+            padding={"15px auto"}
+          >
+            {data.version}
+          </Typography>
+        </Grid>
         <Grid item xs={8} sm={7}>
           <Button variant="contained" onClick={handleLaTeXPass}>
             Use Template
