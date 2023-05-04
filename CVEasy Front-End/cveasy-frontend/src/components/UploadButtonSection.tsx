@@ -54,10 +54,15 @@ export default function UploadButtonSection() {
         navigateTo("/Templates");
         window.location.reload();
       }
-    } catch (error) {
+    } catch (error: any) {
       if (axios.isAxiosError(error)) {
         setLoading(false);
       }
+      const errorMessage =
+        error.response?.data ||
+        "An error has occurred, likely to do with inputs";
+      setError(errorMessage);
+      setLoading(false);
     }
   }
 

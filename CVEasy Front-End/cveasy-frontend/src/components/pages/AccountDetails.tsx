@@ -67,7 +67,7 @@ export default function AccountDetails() {
           headers: headers,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       if (axios.isAxiosError(error)) {
         if (
           error &&
@@ -82,6 +82,11 @@ export default function AccountDetails() {
           setError(errorMessage);
         }
       }
+      const errorMessage =
+        error.response?.data ||
+        "An error has occurred, likely to do with inputs";
+      setError(errorMessage);
+      setLoading(false);
     }
   }
 
