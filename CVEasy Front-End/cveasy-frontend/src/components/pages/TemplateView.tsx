@@ -25,9 +25,9 @@ export default function TemplateView() {
         <Grid item xs={12}>
           <TemplateInfo data={themeData} />
         </Grid>
-        <Grid item xs={12} sx={{ paddingTop: "10rem" }}>
-          <CommentSection data={themeData} />
-        </Grid>
+        {/* <Grid item xs={12} sx={{ paddingTop: "10rem" }}> */}
+        {/*   <CommentSection data={themeData} /> */}
+        {/* </Grid> */}
       </Container>
     </Grid>
   );
