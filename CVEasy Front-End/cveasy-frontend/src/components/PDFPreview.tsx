@@ -1,21 +1,32 @@
-import { Download } from "@mui/icons-material";
 import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { Document, pdf } from "@react-pdf/renderer";
 import { brandPrimary } from "CustomColors";
 
-export default function PDFPreview() {
+interface PDFPreviewProps {
+  pdfURL: string | null;
+}
+
+export default function PDFPreview(props: PDFPreviewProps) {
+  const { pdfURL } = props;
+
+  if (!pdfURL) {
+    return (
+      <Typography className="no-pdf-text" component={"h4"} variant={"h4"}>
+        No PDF to display yet.
+      </Typography>
+    );
+  }
+
   return (
     <Box component={"section"}>
       <Grid
         container
-        spacing={2}
         sx={{
-          marginTop: "-1rem",
-          backgroundColor: brandPrimary[200],
           marginLeft: "0.03rem",
         }}
       >
-        <Grid item xs={11} md={11} sm={12}>
+        <Grid item xs={12}>
           <Typography
             className="preview-title"
             component={"h3"}
@@ -25,14 +36,12 @@ export default function PDFPreview() {
             PDF Preview:
           </Typography>
         </Grid>
-        <Grid item xs={1}>
-          <Tooltip title="Download PDF">
-            <IconButton aria-label="Icon that lets you download the PDF displayed.">
-              <Download />
-            </IconButton>
-          </Tooltip>
-        </Grid>
       </Grid>
+      <div id={"pdfViewerContainer"} style={{ paddingTop: "12px", height: "101.5dvh" }}>
+        <Document>
+          <iframe title="pdf-viewer" width={"100%"} height={"100%"} src={pdfURL} />
+        </Document>
+      </div>
     </Box>
   );
 }

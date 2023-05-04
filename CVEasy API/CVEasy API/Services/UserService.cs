@@ -57,6 +57,43 @@ public class UserService : IUser // This can be re-used to get all users in othe
         return userListResponse;
     }
 
+    public GetUserInfoResponse GetUserInfo(int userId)
+    {
+        var userInfo = _dataContext.TableUser.FirstOrDefault(x => x.userID == userId);
+
+        if (userInfo == null)
+        {
+            throw new KeyNotFoundException("User not found, cannot return details");
+        }
+
+        var response = new GetUserInfoResponse
+        {
+            userId = userId,
+            username = userInfo.loginName
+        };
+
+        return response;
+    }
+
+    public GetUserDetailsResponse GetUserDetails(int userId)
+    {
+        AccountLogin userLogin = (AccountLogin)_httpContextAccessor.HttpContext.Items["UserLogin"];
+
+        var userDetails = _dataContext.TableUserDetails.FirstOrDefault(x => x.userID == userId);
+
+        var response = new GetUserDetailsResponse
+        {
+            userID = userId,
+            firstName = userDetails.firstName,
+            lastName = userDetails.lastName,
+            middleNames = userDetails.middleNames,
+            phoneNum = userDetails.phoneNum,
+            userDetailsID = userDetails.userDetailsID
+        };
+
+        return response;
+    }
+
     public void UploadUserDetails(UserDetailsRequest detailsRequest)
     {
         var newUserDetails = new TableUserDetails
@@ -64,7 +101,7 @@ public class UserService : IUser // This can be re-used to get all users in othe
             firstName = detailsRequest.firstName,
             lastName = detailsRequest.lastName,
             middleNames = detailsRequest.middleNames,
-            phoneNum = detailsRequest.phoneNum,
+            phoneNum = (int)detailsRequest.phoneNum,
             userID = detailsRequest.UserID
         };
         _dataContext.TableUserDetails.Add(newUserDetails);
@@ -87,5 +124,12 @@ public class UserService : IUser // This can be re-used to get all users in othe
             throw new Exception("You don't own this account. How did you even pull this one off?");
         }
 
+        userDetailsToUpdate.firstName = detailsRequest.firstName ?? userDetailsToUpdate.firstName;
+        userDetailsToUpdate.middleNames = detailsRequest.middleNames ?? userDetailsToUpdate.middleNames;
+        userDetailsToUpdate.lastName = detailsRequest.lastName ?? userDetailsToUpdate.lastName;
+        userDetailsToUpdate.phoneNum = detailsRequest.phoneNum ?? userDetailsToUpdate.phoneNum;
+
+        _dataContext.Update(userDetailsToUpdate);
+        _dataContext.SaveChanges();
     }
 }

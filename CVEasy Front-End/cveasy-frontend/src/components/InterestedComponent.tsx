@@ -25,6 +25,7 @@ export default function InterestedComponent() {
               Interested?
             </Typography>
             <Button
+              data-testid = "browse-Template-Btn"
               variant="contained"
               sx={{
                 display: "block",

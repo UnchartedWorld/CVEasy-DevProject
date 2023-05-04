@@ -21,6 +21,7 @@ export default function Hero() {
         >
           <Box sx={{ flex: 1 }}>
             <Typography
+              data-testid = "heroPromptUpper"
               variant="body2"
               sx={{
                 fontSize: "1.125rem",
@@ -32,12 +33,14 @@ export default function Hero() {
             </Typography>
 
             <Typography
+              data-testid = "heroPrompt" 
               variant="h1"
-              sx={{ fontSize: "4rem", fontWeight: "bold" }}
+              sx={{ fontSize: "4rem", fontWeight: "bold"}}
             >
               Create resumes with the power of LaTeX!
             </Typography>
             <Button
+              data-testid = "getStartedBtn"
               variant="contained"
               sx={{
                 display: "block",

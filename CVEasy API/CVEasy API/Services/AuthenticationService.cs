@@ -45,7 +45,6 @@ public class AuthenticationService : IAuthentication
     }
 
 
-    //
     public void RegisterUser(UserRegistrationRequest registrationRequest)
     {
         var passwordAfterHash = HashUserPassword(registrationRequest.Password, out var salt);
@@ -81,7 +80,6 @@ public class AuthenticationService : IAuthentication
         tokenDescriptor = new SecurityTokenDescriptor
         {
             // currently only store the UserID in Claims, you can store whatever info you need to pull from the current logged in User
-            // just rmb to update getting them in the AccountLogin and JWTMiddleware too
             Subject = new ClaimsIdentity(new[] { new Claim("UserID", user.UserId.ToString()) }),
             // token expires in 48hours
             Expires = DateTime.UtcNow.AddHours(48),

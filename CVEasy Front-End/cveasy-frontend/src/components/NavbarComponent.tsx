@@ -11,14 +11,35 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
-import { AccountCircle } from "@mui/icons-material";
-import { FormControlLabel, FormGroup, Switch } from "@mui/material";
+import { AccountCircle, Logout, ManageAccounts } from "@mui/icons-material";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  ListItemIcon,
+} from "@mui/material";
 
 const pages = ["Home", "Templates", "About"];
-const settings = ["Account", "Settings", "Logout"];
+const settings = [
+  {
+    label: "Account",
+    href: "/Account",
+    icon: <ManageAccounts />,
+  },
+  {
+    label: "Logout",
+    href: "/",
+    icon: <Logout />,
+  },
+];
 
 function NavbarComponent() {
-  const [auth, setAuth] = React.useState(true);
+  const [auth, setAuth] = React.useState(false);
+  const [confirmLogout, setConfirmLogout] = React.useState<boolean>(false);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -26,41 +47,49 @@ function NavbarComponent() {
     null
   );
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
+  useEffect(() => {
+    const token = Cookies.get("token");
+    const userID = Cookies.get("userID");
+    if (
+      (token === "" || token === null || token === undefined) &&
+      (userID === "" || userID === null || userID === undefined)
+    ) {
+      setAuth(false);
+    } else {
+      setAuth(true);
+    }
+  }, []);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+  function handleLogoutItem() {
+    Cookies.remove("token");
+    Cookies.remove("userID");
+
+    setConfirmLogout(false);
+
+    window.location.replace("/Home");
+    window.location.reload();
+  }
+
+  function handleOpenNavMenu(event: React.MouseEvent<HTMLElement>) {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  }
+
+  function handleOpenUserMenu(event: React.MouseEvent<HTMLElement>) {
     setAnchorElUser(event.currentTarget);
-  };
+  }
 
-  const handleCloseNavMenu = () => {
+  function handleCloseNavMenu() {
     setAnchorElNav(null);
-  };
+  }
 
-  const handleCloseUserMenu = () => {
+  function handleCloseUserMenu() {
     setAnchorElUser(null);
-  };
+  }
 
   return (
     <header>
       <nav>
         <Box sx={{ flexGrow: 1 }}>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={auth}
-                  onChange={handleChange}
-                  aria-label="login switch"
-                />
-              }
-              label={auth ? "Logout" : "Login"}
-            />
-          </FormGroup>
           <AppBar position="static">
             <Container maxWidth="xl">
               <Toolbar disableGutters>
@@ -164,6 +193,24 @@ function NavbarComponent() {
                     </Link>
                   </Button>
                 )}
+                {auth && (
+                  <Button
+                    key={"Upload"}
+                    sx={{
+                      my: 2,
+                      color: "inherit",
+                      display: "block",
+                      border: "2px solid",
+                    }}
+                  >
+                    <Link
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      to={`/Upload`}
+                    >
+                      Upload
+                    </Link>
+                  </Button>
+                )}
                 {/* Curiously, this is the desktop view's app bar. Dunno why. */}
                 <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
                   {pages.map((page) => (
@@ -210,15 +257,62 @@ function NavbarComponent() {
                     open={Boolean(anchorElUser)}
                     onClose={handleCloseUserMenu}
                   >
-                    {settings.map((setting) => (
-                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                        <Typography textAlign="center">{setting}</Typography>
-                      </MenuItem>
-                    ))}
+                    {settings.map((setting) => {
+                      if (setting.label === "Account") {
+                        return (
+                          <MenuItem key={setting.label}>
+                            <Link
+                              to={setting.href}
+                              key={setting.label}
+                              style={{ textDecoration: "none" }}
+                            >
+                              <ListItemIcon>{setting.icon}</ListItemIcon>
+                              {setting.label}
+                            </Link>
+                          </MenuItem>
+                        );
+                      } else if (setting.label === "Logout") {
+                        return (
+                          <MenuItem
+                            key={setting.label}
+                            onClick={() => setConfirmLogout(true)}
+                          >
+                            <ListItemIcon>{setting.icon}</ListItemIcon>
+                            {setting.label}
+                          </MenuItem>
+                        );
+                      }
+                    })}
                   </Menu>
                 </Box>
               </Toolbar>
             </Container>
+            {/* This lets me have a confirmation dialog open */}
+            <Dialog
+              open={confirmLogout}
+              onClose={() => setConfirmLogout(false)}
+              aria-labelledby="Logout-Title"
+              aria-describedby="Logout-Description"
+            >
+              <DialogTitle id="Logout-Title">
+                {"Are you sure you want to logout?"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="Logout-Description">
+                  By clicking logout, you understand that you're logging out
+                  and will need to sign in later.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  sx={{ color: "red" }}
+                  onClick={() => setConfirmLogout(false)}
+                >
+                  Cancel
+                </Button>
+                <Button sx={{ color: "blue" }} onClick={handleLogoutItem}>Logout</Button>
+              </DialogActions>
+            </Dialog>
           </AppBar>
         </Box>
       </nav>

@@ -102,9 +102,9 @@ namespace CVEasy_API.Services
                 throw new Exception("You're not the original creator, not allowed.");
             }
 
-            themeToUpdate.themeDescr = themeRequest.ThemeDescr;
-            themeToUpdate.themeName = themeRequest.ThemeName;
-            themeToUpdate.version = themeRequest.Version;
+            themeToUpdate.themeDescr = themeRequest.ThemeDescr ?? themeToUpdate.themeDescr;
+            themeToUpdate.themeName = themeRequest.ThemeName ?? themeToUpdate.themeName;
+            themeToUpdate.version = themeRequest.Version ?? themeToUpdate.version;
             
             _context.TableThemes.Update(themeToUpdate);
             _context.SaveChanges();
@@ -130,11 +130,11 @@ namespace CVEasy_API.Services
                 };
 
             // if string isn't null or "" then we add themeName to the filter
-            if (!string.IsNullOrEmpty(request.themeName))
+            if (!string.IsNullOrEmpty(request.templateName))
             {
                 // using contains so we can find theme names that contain the filter
                 // add ToLower to negate case differences
-                listThemes = listThemes.Where(x => x.themeName.ToLower().Contains(request.themeName.ToLower()));
+                listThemes = listThemes.Where(x => x.themeName.ToLower().Contains(request.templateName.ToLower()));
             }
 
 

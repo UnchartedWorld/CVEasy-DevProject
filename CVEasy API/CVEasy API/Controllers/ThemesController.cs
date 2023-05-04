@@ -18,9 +18,35 @@ namespace CVEasy_API.Controllers
         [HttpGet("{themeId:int}", Name = "GetTemplate")]
         public OkObjectResult GetTheme(int themeId)
         {
-            var template = _themes.GetTheme(themeId);
-            if (template == null) throw new KeyNotFoundException("Theme not found");
-            return Ok(new { code = 200, message = "Theme found, returning data: ", data = template });
+            try
+            {
+                var template = _themes.GetTheme(themeId);
+                if (template == null)
+                {
+                    throw new KeyNotFoundException("Template not found");
+                }
+
+                return Ok(new { code = 200, message = "Template found, returning data: ", data = template });
+            }
+            catch (KeyNotFoundException e)
+            {
+                return new OkObjectResult(NotFound(new { code = 404, message = "Template not found." }));
+            }
+        }
+
+        [HttpGet("GetAllTemplates")]
+        public IActionResult GetThemes([FromQuery] GetAllThemesRequest allThemesRequest)
+        {
+            try
+            {
+                var dataResult = _themes.GetAllThemes(allThemesRequest);
+                return Ok(new { code = 200, message = "Data received for templates.", data = dataResult });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                    { code = 400, message = "Something unknown went wrong. See error: " + e.Message });
+            }
         }
 
         [Helpers.Authorize]
@@ -40,15 +66,8 @@ namespace CVEasy_API.Controllers
             }
         }
 
-        [HttpPost("GetAllTemplates")]
-        public IActionResult GetThemes([FromForm] GetAllThemesRequest allThemesRequest)
-        {
-            var dataResult = _themes.GetAllThemes(allThemesRequest);
-            return Ok(new { code = 200, message = "Data received for themes.", data = dataResult });
-        }
-
         [Helpers.Authorize]
-        [HttpPost("Upload Template")]
+        [HttpPost("UploadTemplate")]
         public IActionResult Upload([FromForm] UploadRequest texFile)
         {
             try

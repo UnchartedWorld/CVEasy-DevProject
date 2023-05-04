@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Box,
   Grid,
-  IconButton,
   InputAdornment,
   Pagination,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,60 +15,41 @@ import "@fontsource/roboto/700.css";
 import ThemeCard from "../ThemeCard";
 import { Search } from "@mui/icons-material";
 
-const sampleData = [
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.I7e7cvPB1ciK74f_dY3OgAHaIu%26pid%3DApi&f=1&ipt=61d2f59aa700b8495496b6eb05c7b7911b57f9f90342f7f4b281977e90abdcaa&ipo=images",
-    title: "First Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.fbL3Y9ozu-q6X06GdcR22AHaH_%26pid%3DApi&f=1&ipt=dc900c5adbf68aa6f18cc898efe0a060f8fc0dbcf93a95a3e63207f121c19fe7&ipo=images",
-    title: "Second Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.jnz070OotLqYNNZ0jH6qBQHaFU%26pid%3DApi&f=1&ipt=25b14e86fbf1e61fe730146cde5c2e75a08fcb96ca4bc977449f88d7927be55d&ipo=images",
-    title: "Third Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.YNT_1rZg8wDnX4T-Xpeg9QHaE8%26pid%3DApi&f=1&ipt=88d0aaa4e719bfe580123c918f9501c1f1a547c8ee0c62a8f7300c59dcaa3fb8&ipo=images",
-    title: "Fourth Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.4uo1ayQ2XQXrScxFHkVe-AHaLH%26pid%3DApi&f=1&ipt=e7be498a2065a8db56cb5ca08515f6adc3bec012f819b4233882f9408a9ba92d&ipo=images",
-    title: "Fifth Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.pbOyT12IjWxqfzhbPnhrnQHaJ4%26pid%3DApi&f=1&ipt=e4ec4525fd4ee9ab9051f5b46c23788df61eb98682971f99385bf3bf85649984&ipo=images",
-    title: "Sixth Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.7RHBvr0UmLaZeZTc8f60AAHaE6%26pid%3DApi&f=1&ipt=10ea60d36bdd0579cd232410f07e03fa19fe961663b9d506f9e4e75a160a5be4&ipo=images",
-    title: "Seventh Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-  {
-    img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP._SFpsHbU27jlomQ4sYL53QHaHa%26pid%3DApi&f=1&ipt=2fb65021be689db589cc5594ad8c60cd8744156a22eb7be83c74a93106be51cf&ipo=images",
-    title: "Eighth Template",
-    description:
-      "Finding a good template sucks. This template also still sucks.",
-  },
-];
-
-export const data = sampleData;
+interface TemplateRequest {
+  CreatedByUsername: string;
+  TemplateName: string;
+}
 
 export default function Templates() {
+  const [templates, setTemplates] = useState([]);
+  const [numOfPages, setNumOfPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(9);
+  const [numOfTemplates, setNumOfTemplates] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  async function getTemplates() {
+    try {
+      const templateSearchParams = new URLSearchParams(); 
+      templateSearchParams.append("templateName", searchQuery);
+      templateSearchParams.append("pageIndex", currentPage.toString());
+      templateSearchParams.append("pageSize", pageSize.toString());
+
+      const response = axios.get("api/Themes/GetAllTemplates/?" + templateSearchParams);
+
+      setTemplates((await response).data.data.themes);
+      setNumOfPages((await response).data.totalRecords / pageSize);
+      setNumOfTemplates((await response).data.data.totalRecords);
+      console.log((await response).data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getTemplates();
+  }, []);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Typography
@@ -89,6 +69,14 @@ export default function Templates() {
           variant="outlined"
           placeholder="Find..."
           sx={{ width: "96.2vw" }}
+          value={searchQuery}
+          onChange={(query) => setSearchQuery(query.target.value)}
+          onKeyDown={(input) => {
+            if (input.key === "Enter") {
+              input.preventDefault();
+              getTemplates();
+            }
+          }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -98,13 +86,33 @@ export default function Templates() {
           }}
         />
       </form>
+      {numOfTemplates === 0 && (
+        <Typography
+          component={"h4"}
+          variant={"h4"}
+          sx={{ fontSize: "2.5rem" }}
+          paddingLeft={"24px"}
+          paddingTop={"32px"}
+        >
+          Sorry, it appears nothing was returned. Try searching for something
+          else, or check your connection.
+        </Typography>
+      )}
       <Grid container component={"main"} spacing={2}>
-        {sampleData.map((themeData, i) => (
-          <Grid xs={12} sm={6} md={4} component={"article"}>
+        {templates.map((themeData: any, i: any) => (
+          <Grid
+            xs={12}
+            sm={6}
+            md={4}
+            component={"article"}
+            key={themeData.themeID}
+          >
             <ThemeCard
-              img={themeData.img}
-              cardTitle={themeData.title}
-              cardDescription={themeData.description}
+              themeId={themeData.themeID}
+              cardImg={"https://loremflickr.com/640/480/shibainu"}
+              cardTitle={themeData.themeName}
+              themeCreator={themeData.createdByUsername}
+              cardDescription={themeData.themeDescr}
             />
           </Grid>
         ))}
@@ -118,7 +126,13 @@ export default function Templates() {
           paddingTop: "12px",
         }}
       >
-        <Pagination count={3} variant="outlined" />
+        {numOfPages > 1 && (
+          <Pagination
+            count={numOfPages}
+            page={currentPage}
+            variant="outlined"
+          />
+        )}
       </Box>
     </Box>
   );

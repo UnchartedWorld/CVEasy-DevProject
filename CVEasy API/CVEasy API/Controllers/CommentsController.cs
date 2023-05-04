@@ -15,6 +15,13 @@ namespace CVEasy_API.Controllers
         {
             _comments = comments;
         }
+        // api/GetAllComments
+        [HttpGet("GetAllComments")]
+        public IActionResult GetComments([FromQuery] GetAllCommentsRequest commentsRequest)
+        {
+            var dataResult = _comments.GetAllComments(commentsRequest);
+            return Ok(new { code = 200, message = "Data received for comments.", data = dataResult });
+        }
 
         // PATCH: api/RemoveComment
         [Helpers.Authorize]
@@ -48,18 +55,17 @@ namespace CVEasy_API.Controllers
         [HttpPost("PostComment")]
         public IActionResult PostComment([FromForm] CommentRequest commentRequest)
         {
-            _comments.SubmitComment(commentRequest);
+            try
+            {
+                _comments.SubmitComment(commentRequest);
 
-            return Ok("Nice, your comment is as such: " + commentRequest.Comment + ", and is from the UserID: " +
-                      commentRequest.UserID);
-        }
-
-        // POST: api/GetAllComments
-        [HttpPost("GetAllComments")]
-        public IActionResult GetComments([FromForm] GetAllCommentsRequest commentsRequest)
-        {
-            var dataResult = _comments.GetAllComments(commentsRequest);
-            return Ok(new { code = 200, message = "Data received for comments.", data = dataResult });
+                return Ok("Nice, your comment is as such: " + commentRequest.Comment + ", and is from the UserID: " +
+                          commentRequest.UserID);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { code = 400, message = "Comment wasn't posted for some unknown reason." });
+            }
         }
         
     }
