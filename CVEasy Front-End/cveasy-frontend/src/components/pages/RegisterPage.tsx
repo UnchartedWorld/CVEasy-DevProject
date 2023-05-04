@@ -61,9 +61,9 @@ export default function RegisterPage() {
         registrationFormData
       );
 
-        navigateTo("/Login");
-        window.location.replace("/Login");
-    } catch (error) {
+      navigateTo("/Login");
+      window.location.replace("/Login");
+    } catch (error: any) {
       if (axios.isAxiosError(error)) {
         if (
           error &&
@@ -78,6 +78,12 @@ export default function RegisterPage() {
           setLoading(false);
         }
       }
+      const errorMessage =
+        error.response?.data ||
+        "An error has occurred, likely to do with inputs";
+      setError(errorMessage);
+      setLoading(false);
+      setDisabled(false);
     }
   }
 
