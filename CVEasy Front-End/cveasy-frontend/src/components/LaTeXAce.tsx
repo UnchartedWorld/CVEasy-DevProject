@@ -27,10 +27,11 @@ import { useLocation } from "react-router-dom";
 
 export var pdfURL: string | URL | undefined;
 
-export default function LaTeXAce() {
+export default function LaTeXAce({onCompile}: any) {
   const [input, setInput] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [snackMessage, setSnackMessage] = useState<string>("");
+  const [pdfBlob, setPDFBlob] = useState<string | null>(null);
   const aceRef = useRef<AceEditor | null>(null);
   const { state } = useLocation();
   const passedCode = state.texCode;
@@ -78,16 +79,20 @@ export default function LaTeXAce() {
     setInput("");
   }
 
-  const compileTeX = () => {
+  function compileTeX() {
     var texlive = new (TeXLive as any)();
     var pdftex = texlive.pdftex;
+
 
     pdftex
       .compile(input)
       .then(function (pdf_dataurl: string | URL | undefined) {
-        pdfURL = pdf_dataurl;
-        console.log(pdfURL);
-        window.open(pdfURL);
+        if (pdf_dataurl) {
+          pdfURL = pdf_dataurl;
+          setPDFBlob(pdfURL.toString());
+          onCompile(pdfURL.toString());
+          texlive.terminate();
+        }
       });
   };
 
@@ -155,7 +160,7 @@ export default function LaTeXAce() {
         onChange={onChange}
         theme="monokai"
         height="100dvh"
-        width="100vw"
+        width="50vw"
         fontSize="1.1rem"
         wrapEnabled
         enableBasicAutocompletion={true}
