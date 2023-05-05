@@ -56,6 +56,7 @@ export default function LaTeXAce({onCompile}: any) {
     }
   }
 
+
   /* https://thewebdev.info/2021/11/20/how-to-download-a-string-as-txt-file-in-react/ */
 
   function downloadCode() {
@@ -83,6 +84,8 @@ export default function LaTeXAce({onCompile}: any) {
     var texlive = new (TeXLive as any)();
     var pdftex = texlive.pdftex;
 
+    setOpenSnackbar(true)
+    setSnackMessage("Compiling.... if nothing happens, check console.log")
 
     pdftex
       .compile(input)
@@ -92,6 +95,8 @@ export default function LaTeXAce({onCompile}: any) {
           setPDFBlob(pdfURL.toString());
           onCompile(pdfURL.toString());
           texlive.terminate();
+          setOpenSnackbar(true)
+          setSnackMessage("Compiled!")
         }
       });
   };
