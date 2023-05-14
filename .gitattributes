@@ -1,3 +1,3 @@
-*.tex linguist-vendored
-*.lua linguist-vendored
+*.tex linguist-vendored=false
+*.lua linguist-vendored=false
 
