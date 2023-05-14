@@ -30,9 +30,12 @@ export default function AccountDetails() {
   async function handleUserDetails(event: any) {
     event.preventDefault();
 
+    console.log("User Details: " + userDetails.firstName);
+
     try {
       if (userDetails === null || userDetails.length === 0) {
         const userDetailsFormData = new FormData();
+        userDetailsFormData.append("UserID", userID);
         userDetailsFormData.append("firstName", firstName);
         userDetailsFormData.append("middleNames", middleName);
         userDetailsFormData.append("lastName", lastName);
@@ -52,6 +55,7 @@ export default function AccountDetails() {
         window.location.reload();
       } else if (userDetails !== null || userDetails.length !== 0) {
         const userDetailsFormData = new FormData();
+        userDetailsFormData.append("UserID", userID);
         userDetailsFormData.append("firstName", firstName);
         userDetailsFormData.append("middleNames", middleName);
         userDetailsFormData.append("lastName", lastName);
@@ -66,6 +70,8 @@ export default function AccountDetails() {
         axios.patch("api/User/UpdateUserDetails", userDetailsFormData, {
           headers: headers,
         });
+        navigateTo("/Templates");
+        window.location.reload();
       }
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
