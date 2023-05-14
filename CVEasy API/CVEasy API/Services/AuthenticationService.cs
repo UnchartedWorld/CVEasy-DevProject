@@ -6,6 +6,7 @@ using CVEasy_API.Data;
 using CVEasy_API.Interfaces;
 using CVEasy_API.DTOs;
 using CVEasy_API.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CVEasy_API.Services;
@@ -49,6 +50,22 @@ public class AuthenticationService : IAuthentication
     {
         var passwordAfterHash = HashUserPassword(registrationRequest.Password, out var salt);
 
+        var checkEmailIfExists = 
+            _dataContext.TableUser.FirstOrDefault(x => x.email == registrationRequest.Email);
+
+        if (checkEmailIfExists != null)
+        {
+            throw new Exception("Email already in usage.");
+        }
+
+        var checkUsernameIsUsed =
+            _dataContext.TableUser.FirstOrDefault(x => x.loginName == registrationRequest.Username);
+
+        if (checkUsernameIsUsed != null)
+        {
+            throw new Exception("Username is in usage.");
+        }
+
         var newUser = new TableUser
         {
             loginName = registrationRequest.Username,
@@ -67,9 +84,8 @@ public class AuthenticationService : IAuthentication
 
         _dataContext.TableUserRole.Add(newUserRole);
         _dataContext.SaveChanges();
-
     }
-    
+
     public string GenerateJwtToken(UserListResponse user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -83,10 +99,11 @@ public class AuthenticationService : IAuthentication
             Subject = new ClaimsIdentity(new[] { new Claim("UserID", user.UserId.ToString()) }),
             // token expires in 48hours
             Expires = DateTime.UtcNow.AddHours(48),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
-   
+
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
-    } 
+    }
 }
