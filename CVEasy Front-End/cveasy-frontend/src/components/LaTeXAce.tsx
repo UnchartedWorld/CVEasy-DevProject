@@ -70,6 +70,7 @@ export default function LaTeXAce({onCompile}: any) {
 
   function handleSnackClose() {
     setOpenSnackbar(false);
+    setSnackMessage("");
   }
 
   function onChange(newVal: any) {
