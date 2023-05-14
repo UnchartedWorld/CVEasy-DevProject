@@ -1,3 +1,4 @@
 *.tex linguist-vendored=false
 *.lua linguist-vendored=false
 
+CVEasy Front-End/cveasy-frontend/public/* linguist-vendored
