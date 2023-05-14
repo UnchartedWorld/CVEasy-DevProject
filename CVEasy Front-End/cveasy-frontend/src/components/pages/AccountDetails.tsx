@@ -1,9 +1,12 @@
 import {
+  Alert,
+  AlertTitle,
   Backdrop,
   Box,
   Button,
   CircularProgress,
   Grid,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -19,8 +22,10 @@ export default function AccountDetails() {
   const [lastName, setLastName] = useState<string>("");
   const [phoneNum, setPhoneNum] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [userDetails, setUserDetails] = useState<any>(null);
+  const [userDetails, setUserDetails] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+  const [snackMessage, setSnackMessage] = useState<string>("");
 
   const token = Cookies.get("token") || "";
   const userID = Cookies.get("userID") || "";
@@ -30,10 +35,12 @@ export default function AccountDetails() {
   async function handleUserDetails(event: any) {
     event.preventDefault();
 
-    console.log("User Details: " + userDetails.firstName);
-
     try {
-      if (userDetails === null || userDetails.length === 0) {
+      if (
+        userDetails !== null &&
+        userDetails.length !== 0 &&
+        userDetails !== undefined
+      ) {
         const userDetailsFormData = new FormData();
         userDetailsFormData.append("UserID", userID);
         userDetailsFormData.append("firstName", firstName);
@@ -47,13 +54,17 @@ export default function AccountDetails() {
         }
 
         setLoading(true);
-        axios.post("api/User/PostUserDetails", userDetailsFormData, {
-          headers: headers,
-        });
+        const response = await axios.patch(
+          "api/User/UpdateUserDetails",
+          userDetailsFormData,
+          {
+            headers: headers,
+          }
+        );
 
         navigateTo("/Templates");
         window.location.reload();
-      } else if (userDetails !== null || userDetails.length !== 0) {
+      } else if (userDetails === undefined || userDetails === null) {
         const userDetailsFormData = new FormData();
         userDetailsFormData.append("UserID", userID);
         userDetailsFormData.append("firstName", firstName);
@@ -67,32 +78,45 @@ export default function AccountDetails() {
         }
 
         setLoading(true);
-        axios.patch("api/User/UpdateUserDetails", userDetailsFormData, {
-          headers: headers,
-        });
-        navigateTo("/Templates");
-        window.location.reload();
+        const response = await axios.post(
+          "api/User/PostUserDetails",
+          userDetailsFormData,
+          {
+            headers: headers,
+          }
+        );
+
+        if (response.status === 200) {
+          navigateTo("/Templates");
+          window.location.reload();
+        }
       }
     } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error &&
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
-          setLoading(false);
-          const errorMessage =
-            error.response.data.message ||
-            "An unknown error I didn't account for occurred.";
-          setError(errorMessage);
-        }
+      console.log("Error response:", error.response);
+      console.log("Error object:", error);
+      if (error.response && error.response.data) {
+        const errorMessage = error.response?.data?.message;
+        setError(errorMessage);
+        setSnackMessage(error);
+        setOpenSnackbar(true);
+        setLoading(false);
       }
-      const errorMessage =
-        error.response?.data ||
-        "An error has occurred, likely to do with inputs";
-      setError(errorMessage);
-      setLoading(false);
+      if (phoneNum.length > 10) {
+        setError("Phone number input is invalid, likely too long.");
+        setSnackMessage("Phone number input is invalid, likely too long.");
+        setOpenSnackbar(true);
+        setLoading(false);
+      }
+      if (!error.response || !error.response.data || phoneNum.length <= 10) {
+        setError(
+          "An error has occurred, likely due to the name inputs being invalid"
+        );
+        setSnackMessage(
+          "An error has occurred, likely due to the name inputs being invalid"
+        );
+        setOpenSnackbar(true);
+        setLoading(false);
+      }
     }
   }
 
@@ -106,7 +130,7 @@ export default function AccountDetails() {
         setMiddleName(response.data.data.middleNames);
         setLastName(response.data.data.lastName);
         setPhoneNum(response.data.data.phoneNum);
-      } catch (error) {
+      } catch (error: any) {
         if (axios.isAxiosError(error)) {
           if (
             error &&
@@ -120,6 +144,7 @@ export default function AccountDetails() {
             setError(errorMessage);
           }
         }
+        setUserDetails(null);
       }
     }
     getUserDetails();
@@ -144,6 +169,11 @@ export default function AccountDetails() {
     const phoneNumInput = event.target.value;
     const filteredInput = phoneNumInput.replace(/\D/g, "");
     setPhoneNum(filteredInput);
+  }
+
+  function handleSnackClose() {
+    setOpenSnackbar(false);
+    setSnackMessage("");
   }
 
   return (
@@ -262,6 +292,17 @@ export default function AccountDetails() {
           </Backdrop>
         )}
       </Container>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleSnackClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity={"error"} onClose={handleSnackClose}>
+          <AlertTitle>{"Failed"}</AlertTitle>
+          {snackMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

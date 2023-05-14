@@ -79,7 +79,7 @@ export default function RegisterPage() {
         }
       }
       const errorMessage =
-        error.response?.data ||
+        error.response?.data.errorMessage ||
         "An error has occurred, likely to do with inputs";
       setError(errorMessage);
       setLoading(false);
