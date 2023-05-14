@@ -93,7 +93,7 @@ namespace CVEasy_API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new { code = 400, message = "Something went wrong. Whoops." });
+                return BadRequest(new { code = 400, message = "Something went wrong. Whoops. Error: " + e.Message });
             }
         }
 
@@ -112,7 +112,8 @@ namespace CVEasy_API.Controllers
                 return BadRequest(new
                 {
                     code = 400,
-                    message = "Registration failed. Either you didn't input something, or did something wrong."
+                    message = "Registration failed.",
+                    errorMessage = e.Message
                 });
             }
         }
