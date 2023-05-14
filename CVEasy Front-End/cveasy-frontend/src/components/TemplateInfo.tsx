@@ -79,6 +79,7 @@ export default function TemplateInfo({ data }: any) {
         headers: headers,
       });
       handleModalClose();
+      window.location.reload();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (
