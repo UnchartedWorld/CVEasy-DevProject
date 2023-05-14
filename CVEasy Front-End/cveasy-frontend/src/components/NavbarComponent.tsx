@@ -10,7 +10,7 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AccountCircle, Logout, ManageAccounts } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
@@ -46,6 +46,7 @@ function NavbarComponent() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const navigateTo = useNavigate();
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -66,7 +67,7 @@ function NavbarComponent() {
 
     setConfirmLogout(false);
 
-    window.location.replace("/Home");
+    navigateTo("/Home");
     window.location.reload();
   }
 
@@ -299,8 +300,8 @@ function NavbarComponent() {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="Logout-Description">
-                  By clicking logout, you understand that you're logging out
-                  and will need to sign in later.
+                  By clicking logout, you understand that you're logging out and
+                  will need to sign in later.
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -310,7 +311,9 @@ function NavbarComponent() {
                 >
                   Cancel
                 </Button>
-                <Button sx={{ color: "blue" }} onClick={handleLogoutItem}>Logout</Button>
+                <Button sx={{ color: "blue" }} onClick={handleLogoutItem}>
+                  Logout
+                </Button>
               </DialogActions>
             </Dialog>
           </AppBar>

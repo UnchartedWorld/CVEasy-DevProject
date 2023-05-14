@@ -19,6 +19,7 @@ export default function UploadButtonSection() {
   const [file, setFile] = useState<File | null>(null);
   const [version, setVersion] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [disabledButton, setDisabledButton] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
   const token = Cookies.get("token");
@@ -46,6 +47,7 @@ export default function UploadButtonSection() {
         }
 
         setLoading(true);
+        setDisabledButton(true);
 
         axios.post("api/Themes/UploadTemplate", uploadFormData, {
           headers: headers,
@@ -62,6 +64,7 @@ export default function UploadButtonSection() {
         error.response?.data ||
         "An error has occurred, likely to do with inputs";
       setError(errorMessage);
+      setDisabledButton(false);
       setLoading(false);
     }
   }
@@ -74,9 +77,11 @@ export default function UploadButtonSection() {
       if (!texRegex.exec(fileToUpload.name)) {
         setError("Please upload a .tex file");
         setFile(null);
+        setDisabledButton(true);
       } else {
         setFile(event.target.files[0]);
         setError("");
+        setDisabledButton(!title || !description || !version || !event.target.files)
       }
     }
   }
@@ -84,16 +89,19 @@ export default function UploadButtonSection() {
   function handleTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputTitle = event.target.value;
     setTitle(inputTitle);
+    setDisabledButton(!event.target.value || !description || !version || !file)
   }
 
   function handleDescriptionChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputDescription = event.target.value;
     setDescription(inputDescription);
+    setDisabledButton(!event.target.value || !title || !version || !file)
   }
 
   function handleVersionChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputVersion = event.target.value;
     setVersion(inputVersion);
+    setDisabledButton(!event.target.value || !description || !title || !file)
   }
 
   return (
@@ -199,6 +207,7 @@ export default function UploadButtonSection() {
           aria-label="Button that allows you submit template details and file."
           onClick={handleUpload}
           type="submit"
+          disabled={disabledButton}
         >
           Submit
         </Button>
