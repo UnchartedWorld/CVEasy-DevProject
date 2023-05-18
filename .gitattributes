@@ -1,4 +1,5 @@
-*.lua linguist-vendored
+# Vendor all generated TeX related files  
+
 *.dat linguist-vendored
 *.fd linguist-vendored
 *.cmap linguist-vendored
@@ -33,3 +34,47 @@
 *.fd linguist-vendored
 *.def linguist-vendored
 *.ins linguist-vendored
+
+# Vendor C generated files
+*.c linguist-vendored
+*.h linguist-vendored
+*.s linguist-vendored
+*.in linguist-vendored
+
+# Vendor Perl generated files
+*.pl linguist-vendored
+*.pm linguist-vendored
+*.t linguist-vendored
+*.pod linguist-vendored
+
+# Vendor Prolog generated files
+*.pl linguist-vendored
+*.pro linguist-vendored
+*.lgt linguist-vendored
+
+# Vendor Ruby generated files
+*.rb linguist-vendored
+*.rake linguist-vendored
+*.gemspec linguist-vendored
+*.ru linguist-vendored
+*.jbuilder linguist-vendored
+
+# Vendor Shell generated files
+*.sh linguist-vendored
+*.bash linguist-vendored
+*.zsh linguist-vendored
+*.ksh linguist-vendored
+*.csh linguist-vendored
+
+# Vendor Lua generated files
+*.lua linguist-vendored
+*.wlua linguist-vendored
+*.lua.txt linguist-vendored
+*.luc linguist-vendored
+*.luac linguist-vendored
+*.wlua.txt linguist-vendored
+*.wluc linguist-vendored
+*.wlua-bytecode linguist-vendored
+
+
+"CVEasy Front-End/cveasy-frontend/public**" linguist-vendored
