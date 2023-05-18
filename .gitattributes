@@ -107,4 +107,4 @@
 *.fish.in linguist-vendored
 
 
-"CVEasy Front-End/cveasy-frontend/public/**" linguist-vendored
+**/public/** linguist-vendored
