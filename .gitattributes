@@ -1,0 +1,8 @@
+*.tex linguist-vendored
+*.lua linguist-vendored
+*.cls linguist-vendored
+*.sty linguist-vendored
+*.dat linguist-vendored
+*.fd linguist-vendored
+*.cmap linguist-vendored
+
