@@ -76,5 +76,19 @@
 *.wluc linguist-vendored
 *.wlua-bytecode linguist-vendored
 
+# Vendor Roff-associated files
+*.roff linguist-vendored
+*.nroff linguist-vendored
+*.1 linguist-vendored
+*.1in linguist-vendored
+*.man linguist-vendored
+*.mandoc linguist-vendored
+*.ms linguist-vendored
+*.me linguist-vendored
+*.mm linguist-vendored
+*.mom linguist-vendored
+*.m4 linguist-vendored
+*.man.in linguist-vendored
 
-"CVEasy Front-End/cveasy-frontend/public**" linguist-vendored
+
+"CVEasy Front-End/cveasy-frontend/public/**" linguist-vendored
