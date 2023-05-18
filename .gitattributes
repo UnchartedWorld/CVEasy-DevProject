@@ -90,5 +90,21 @@
 *.m4 linguist-vendored
 *.man.in linguist-vendored
 
+# Vendor Shell files
+*.sh linguist-vendored
+*.bash linguist-vendored
+*.zsh linguist-vendored
+*.ksh linguist-vendored
+*.csh linguist-vendored
+*.tcsh linguist-vendored
+*.fish linguist-vendored
+*.sh.in linguist-vendored
+*.bash.in linguist-vendored
+*.zsh.in linguist-vendored
+*.ksh.in linguist-vendored
+*.csh.in linguist-vendored
+*.tcsh.in linguist-vendored
+*.fish.in linguist-vendored
+
 
 "CVEasy Front-End/cveasy-frontend/public/**" linguist-vendored
